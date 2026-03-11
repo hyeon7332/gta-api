@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.gta.mapper.OwnedTransportMapper">
+	<!-- 내 보유 이동수단 목록 조회 (모델 + 보관위치 조인) -->
+    <select id="selectOwnedTransportPage" resultType="com.gta.dto.OwnedTransportListDto">
+	    SELECT
+	        ot.owned_id,
+	        ot.own_status,
+	
+	        tm.model_id,
+	        tm.manufacturer,
+	        tm.name,
+	        tm.transport_category,
+	        ot.decal,
+	        tm.lap_time,
+	        tm.top_speed,
+	        tm.price,
+	        tm.release_date,
+	
+	        g.garage_id,
+	        g.name AS garage_name,
+	        g.type AS garage_type,
+	        ots.slot_no
+	
+	    FROM owned_transport ot
+	    INNER JOIN transport_model tm
+	        ON tm.model_id = ot.model_id
+	    LEFT JOIN owned_transport_storage ots
+	        ON ots.owned_id = ot.owned_id
+	    LEFT JOIN garage g
+	        ON g.garage_id = ots.garage_id
+	
+	    ORDER BY
+	        g.sort_order IS NULL,
+	        g.sort_order ASC,
+	        ots.slot_no IS NULL,
+	        ots.slot_no ASC,
+	        ot.owned_id DESC
+	    LIMIT #{size} OFFSET #{offset}
+	</select>
+	
+	<select id="selectOwnedTransportCount" resultType="int">
+	    SELECT COUNT(*)
+	    FROM owned_transport
+	</select>
+
+    <!-- 보유 이동수단 등록 -->
+    <insert id="insertOwnedTransport"
+            parameterType="com.gta.dto.OwnedTransportCreateRequest"
+            useGeneratedKeys="true"
+            keyProperty="ownedId"
+            keyColumn="owned_id">
+        INSERT INTO owned_transport
+        (
+            model_id,
+            decal,
+            own_status
+        )
+        VALUES
+        (
+            #{modelId},
+            #{decal},
+            COALESCE(#{ownStatus}, '보유')
+        )
+    </insert>
+
+    <!-- 보유 이동수단 보관 위치 등록 -->
+    <insert id="insertOwnedTransportStorage"
+            parameterType="com.gta.dto.OwnedTransportCreateRequest">
+        INSERT INTO owned_transport_storage
+        (
+            owned_id,
+            garage_id,
+            slot_no
+        )
+        VALUES
+        (
+            #{ownedId},
+            #{garageId},
+            #{slotNo}
+        )
+    </insert>
+
+    <update id="updateDecal">
+        UPDATE owned_transport
+        SET decal = #{decal}
+        WHERE owned_id = #{ownedId}
+    </update>
+
+    <!-- owned_id 존재 여부 확인 -->
+    <select id="existsByOwnedId" resultType="int">
+        SELECT COUNT(1)
+        FROM owned_transport_storage
+        WHERE owned_id = #{ownedId}
+    </select>
+
+    <!-- 해당 차고 + 슬롯에 이미 배치된 owned_id 조회 -->
+    <select id="selectOwnedIdByGarageAndSlot" resultType="long">
+        SELECT owned_id
+        FROM owned_transport_storage
+        WHERE garage_id = #{garageId}
+          AND slot_no = #{slotNo}
+        LIMIT 1
+    </select>
+
+    <!-- 최초 차고/슬롯 등록 -->
+    <insert id="insertLocation">
+        INSERT INTO owned_transport_storage
+        (
+            owned_id,
+            garage_id,
+            slot_no,
+            moved_at
+        )
+        VALUES
+        (
+            #{ownedId},
+            #{garageId},
+            #{slotNo},
+            NOW()
+        )
+    </insert>
+
+    <!-- 차고 + 슬롯 이동 -->
+    <update id="updateLocation">
+        UPDATE owned_transport_storage
+        SET garage_id = #{garageId},
+            slot_no = #{slotNo},
+            moved_at = NOW()
+        WHERE owned_id = #{ownedId}
+    </update>
+
+    <!-- 차고/슬롯 제거 -->
+    <delete id="deleteByOwnedId">
+        DELETE
+        FROM owned_transport_storage
+        WHERE owned_id = #{ownedId}
+    </delete>
+
+    <!-- 보유 이동수단 삭제 -->
+    <delete id="deleteById">
+        DELETE
+        FROM owned_transport
+        WHERE owned_id = #{ownedId}
+    </delete>
+</mapper>  

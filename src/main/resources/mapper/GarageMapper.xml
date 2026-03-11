@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.gta.mapper.GarageMapper">
+	<resultMap id="GarageListMap" type="com.gta.dto.GarageListDto">
+    	<id property="garageId" column="garage_id"/>
+    	<result property="name" column="name"/>
+    	<result property="type" column="type"/>
+    	<result property="capacity" column="capacity"/>
+    	<result property="sortOrder" column="sort_order"/>
+  	</resultMap>
+  	
+	<select id="selectGarageList" resultMap="GarageListMap">
+		SELECT
+			garage_id,
+	      	name,
+	      	type,
+	      	capacity,
+	      	sort_order
+	    FROM garage
+	    ORDER BY sort_order ASC, garage_id ASC
+	</select>
+
+	<select id="selectOccupiedSlotsByGarageId" resultType="int">
+		SELECT
+	    	slot_no
+	  	FROM owned_transport_storage
+	  	WHERE garage_id = #{garageId}
+	  	ORDER BY slot_no ASC
+	</select>
+</mapper>

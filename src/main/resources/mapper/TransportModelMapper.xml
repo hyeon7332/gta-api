@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.gta.mapper.TransportModelMapper">
+  	<!-- 이동수단 모델 목록 조회 -->
+  	<select id="selectTransportModelList" resultType="com.gta.dto.TransportModelDto">
+  		SELECT
+      		  model_id
+            , manufacturer
+            , name
+            , transport_category
+            , upgrade_type
+            , upgrade_location
+            , lap_time
+            , top_speed
+            , price
+            , release_date
+            , source
+            , weight
+            , drive_gears
+            , drive_train
+            , seats
+            , performance
+            , features
+    	FROM transport_model
+    	<where>
+    		<if test="keyword != null and keyword != ''">
+    			AND (
+		            name LIKE CONCAT('%', #{keyword}, '%')
+		            OR manufacturer LIKE CONCAT('%', #{keyword}, '%')
+		        )
+    		</if>
+    	</where>
+    	ORDER BY UPPER(manufacturer), UPPER(name)
+  	</select>
+  	
+  	<!-- 이동수단 모델 등록 -->
+    <insert id="insertTransportModel">
+        INSERT INTO transport_model
+        (
+              manufacturer
+            , name
+            , transport_category
+            , upgrade_type
+            , upgrade_location
+            , lap_time
+            , top_speed
+            , price
+            , release_date
+            , source
+            , weight
+            , drive_gears
+            , drive_train
+            , seats
+            , performance
+            , features
+        )
+        VALUES
+        (
+              #{manufacturer}
+            , #{name}
+            , #{transportCategory}
+            , #{upgradeType}
+            , #{upgradeLocation}
+            , #{lapTime}
+            , #{topSpeed}
+            , #{price}
+            , #{releaseDate}
+            , #{source}
+            , #{weight}
+            , #{driveGears}
+            , #{driveTrain}
+            , #{seats}
+            , #{performance}
+            , #{features}
+        )
+    </insert>
+
+
+    <!-- 이동수단 모델 수정 -->
+    <update id="updateTransportModel">
+        UPDATE transport_model
+        SET
+              manufacturer = #{request.manufacturer}
+            , name = #{request.name}
+            , transport_category = #{request.transportCategory}
+            , upgrade_type = #{request.upgradeType}
+            , upgrade_location = #{request.upgradeLocation}
+            , lap_time = #{request.lapTime}
+            , top_speed = #{request.topSpeed}
+            , price = #{request.price}
+            , release_date = #{request.releaseDate}
+            , source = #{request.source}
+            , weight = #{request.weight}
+            , drive_gears = #{request.driveGears}
+            , drive_train = #{request.driveTrain}
+            , seats = #{request.seats}
+            , performance = #{request.performance}
+            , features = #{request.features}
+        WHERE model_id = #{modelId}
+    </update>
+
+
+    <!-- 이동수단 모델 삭제 -->
+    <delete id="deleteTransportModel">
+        DELETE
+        FROM transport_model
+        WHERE model_id = #{modelId}
+    </delete>
+  </mapper>
