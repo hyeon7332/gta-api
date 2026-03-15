@@ -34,8 +34,8 @@
 		    </if>
 		</where>
 		ORDER BY manufacturer ASC,
-    			 name ASC,
-    			 transport_category ASC
+    			 transport_category ASC,
+    			 name ASC
 		LIMIT #{size} OFFSET #{offset}
 	</select>
 	
