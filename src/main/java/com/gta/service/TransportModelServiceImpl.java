@@ -1,6 +1,8 @@
 package com.gta.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,21 @@ public class TransportModelServiceImpl implements TransportModelService {
 	private final TransportModelMapper transportModelMapper;
 
 	@Override
-	public List<TransportModelDto> getList(String keyword) {
-		return transportModelMapper.selectTransportModelList(keyword);
+	public Map<String, Object> getList(String keyword, int page, int size) {
+		int offset = (page - 1) * size;
+
+	    List<TransportModelDto> list =
+	            transportModelMapper.selectList(keyword, offset, size);
+
+	    int total =
+	            transportModelMapper.selectCount(keyword);
+
+	    Map<String, Object> result = new HashMap<>();
+
+	    result.put("items", list);
+	    result.put("total", total);
+
+	    return result;
 	}
 
 	@Override

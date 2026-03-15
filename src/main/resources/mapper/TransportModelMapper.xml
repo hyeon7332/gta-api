@@ -5,36 +5,50 @@
   
   <mapper namespace="com.gta.mapper.TransportModelMapper">
   	<!-- 이동수단 모델 목록 조회 -->
-  	<select id="selectTransportModelList" resultType="com.gta.dto.TransportModelDto">
-  		SELECT
-      		  model_id
-            , manufacturer
-            , name
-            , transport_category
-            , upgrade_type
-            , upgrade_location
-            , lap_time
-            , top_speed
-            , price
-            , release_date
-            , source
-            , weight
-            , drive_gears
-            , drive_train
-            , seats
-            , performance
-            , features
-    	FROM transport_model
-    	<where>
-    		<if test="keyword != null and keyword != ''">
-    			AND (
-		            name LIKE CONCAT('%', #{keyword}, '%')
-		            OR manufacturer LIKE CONCAT('%', #{keyword}, '%')
+  	<select id="selectList" resultType="com.gta.dto.TransportModelDto">
+		SELECT
+		    model_id,
+		    manufacturer,
+		    name,
+		    transport_category,
+		    upgrade_type,
+		    upgrade_location,
+		    lap_time,
+		    top_speed,
+		    price,
+		    release_date,
+		    source,
+		    weight,
+		    drive_gears,
+		    drive_train,
+		    seats,
+		    features,
+		    performance
+		FROM transport_model
+		<where>
+		    <if test="keyword != null and keyword != ''">
+		        AND (
+		            manufacturer LIKE CONCAT('%', #{keyword}, '%')
+		            OR name LIKE CONCAT('%', #{keyword}, '%')
 		        )
-    		</if>
-    	</where>
-    	ORDER BY UPPER(manufacturer), UPPER(name)
-  	</select>
+		    </if>
+		</where>
+		ORDER BY model_id DESC
+		LIMIT #{size} OFFSET #{offset}
+	</select>
+	
+	<select id="selectCount" resultType="int">
+		SELECT COUNT(*)
+		FROM transport_model
+		<where>
+		    <if test="keyword != null and keyword != ''">
+		        AND (
+		            manufacturer LIKE CONCAT('%', #{keyword}, '%')
+		            OR name LIKE CONCAT('%', #{keyword}, '%')
+		        )
+		    </if>
+		</where>
+	</select>
   	
   	<!-- 이동수단 모델 등록 -->
     <insert id="insertTransportModel">

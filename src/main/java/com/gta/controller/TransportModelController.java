@@ -1,6 +1,6 @@
 package com.gta.controller;
 
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gta.dto.TransportModelCreateRequest;
-import com.gta.dto.TransportModelDto;
 import com.gta.dto.TransportModelUpdateRequest;
 import com.gta.service.TransportModelService;
 
@@ -35,8 +34,11 @@ public class TransportModelController {
      * @return 이동수단 모델 목록
      */
 	@GetMapping
-	public List<TransportModelDto> getList(@RequestParam(required = false) String keyword) {
-		return transportModelService.getList(keyword);
+	public Map<String, Object> getList(@RequestParam(required = false) String keyword,
+									   @RequestParam(defaultValue = "1") int page,
+								       @RequestParam(defaultValue = "20") int size)
+	{
+		return transportModelService.getList(keyword, page, size);
 	}
 	
 	/**

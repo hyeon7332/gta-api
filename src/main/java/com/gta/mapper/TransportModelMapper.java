@@ -11,7 +11,13 @@ import com.gta.dto.TransportModelUpdateRequest;
 
 @Mapper
 public interface TransportModelMapper {
-	List<TransportModelDto> selectTransportModelList(@Param("keyword") String keyword);
+	
+	List<TransportModelDto> selectList(@Param("keyword") String keyword,
+	        						   @Param("offset") int offset,
+	        						   @Param("size") int size
+	);
+
+	int selectCount(@Param("keyword") String keyword);
 	
 	int insertTransportModel(TransportModelCreateRequest request);
 
@@ -19,4 +25,5 @@ public interface TransportModelMapper {
                              @Param("request") TransportModelUpdateRequest request);
 
     int deleteTransportModel(@Param("modelId") Long modelId);
+
 }
