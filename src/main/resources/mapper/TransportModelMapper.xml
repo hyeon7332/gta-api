@@ -33,7 +33,9 @@
 		        )
 		    </if>
 		</where>
-		ORDER BY model_id DESC
+		ORDER BY manufacturer ASC,
+    			 name ASC,
+    			 transport_category ASC
 		LIMIT #{size} OFFSET #{offset}
 	</select>
 	
