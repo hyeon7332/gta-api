@@ -51,4 +51,10 @@ public class TransportModelServiceImpl implements TransportModelService {
 	public int deleteTransportModel(Long modelId) {
 		return transportModelMapper.deleteTransportModel(modelId);
 	}
+
+	@Override
+	public List<TransportModelDto> getOptions() {
+		System.out.println(transportModelMapper.selectOptions());
+		return transportModelMapper.selectOptions();
+	}
 }

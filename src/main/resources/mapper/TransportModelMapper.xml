@@ -125,4 +125,28 @@
         FROM transport_model
         WHERE model_id = #{modelId}
     </delete>
+    
+    <!-- 이동수단 모델 옵션 목록 조회 -->
+    <select id="selectOptions" resultType="com.gta.dto.TransportModelDto">
+	    SELECT
+	        model_id,
+	        manufacturer,
+	        name,
+	        transport_category,
+	        upgrade_type,
+	        upgrade_location,
+	        lap_time,
+	        top_speed,
+	        price,
+	        release_date,
+	        source,
+	        weight,
+	        drive_gears,
+	        drive_train,
+	        seats,
+	        features,
+	        performance
+	    FROM transport_model
+	    ORDER BY manufacturer ASC, name ASC, transport_category ASC
+	</select>
   </mapper>

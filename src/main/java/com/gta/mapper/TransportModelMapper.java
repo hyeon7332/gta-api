@@ -26,4 +26,6 @@ public interface TransportModelMapper {
 
     int deleteTransportModel(@Param("modelId") Long modelId);
 
+	List<TransportModelDto> selectOptions();
+
 }

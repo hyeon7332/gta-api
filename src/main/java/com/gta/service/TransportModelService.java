@@ -1,8 +1,10 @@
 package com.gta.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.gta.dto.TransportModelCreateRequest;
+import com.gta.dto.TransportModelDto;
 import com.gta.dto.TransportModelUpdateRequest;
 
 
@@ -45,4 +47,11 @@ public interface TransportModelService {
      * @return 삭제 건수
      */
     int deleteTransportModel(Long modelId);
+
+    /**
+     * 이동수단 모델 옵션 목록 조회
+     *
+     * @return 이동수단 모델 옵션 목록
+     */
+	List<TransportModelDto> getOptions();
 }

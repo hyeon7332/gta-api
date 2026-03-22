@@ -1,5 +1,6 @@
 package com.gta.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gta.dto.TransportModelCreateRequest;
+import com.gta.dto.TransportModelDto;
 import com.gta.dto.TransportModelUpdateRequest;
 import com.gta.service.TransportModelService;
 
@@ -77,6 +79,17 @@ public class TransportModelController {
     public ResponseEntity<Integer> deleteTransportModel(@PathVariable Long modelId) {
         int deleted = transportModelService.deleteTransportModel(modelId);
         return ResponseEntity.ok(deleted);
+    }
+    
+    /**
+     * 이동수단 모델 옵션 목록 조회
+     *
+     * @return 이동수단 모델 옵션 목록
+     */
+    @GetMapping("/options")
+    public List<TransportModelDto> getOptions()
+    {
+        return transportModelService.getOptions();
     }
  
 }
