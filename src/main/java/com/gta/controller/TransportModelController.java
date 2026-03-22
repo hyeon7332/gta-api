@@ -38,7 +38,7 @@ public class TransportModelController {
 	@GetMapping
 	public Map<String, Object> getList(@RequestParam(required = false) String keyword,
 									   @RequestParam(defaultValue = "1") int page,
-								       @RequestParam(defaultValue = "20") int size)
+								       @RequestParam(defaultValue = "15") int size)
 	{
 		return transportModelService.getList(keyword, page, size);
 	}

@@ -1,8 +1,6 @@
 package com.gta.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,19 +20,9 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	private final OwnedTransportMapper ownedTransportMapper;
 	
 	@Override
-	public Map<String, Object> getList(int page, int size) {
-		int offset = (page - 1) * size;
-
-	    List<OwnedTransportListDto> list =
-	        ownedTransportMapper.selectOwnedTransportPage(offset, size);
-
-	    int total = ownedTransportMapper.selectOwnedTransportCount();
-
-	    Map<String, Object> result = new HashMap<>();
-	    result.put("items", list);
-	    result.put("total", total);
-
-	    return result;
+	public List<OwnedTransportListDto> getList()
+	{
+	    return ownedTransportMapper.selectList();
 	}
 
 	@Override

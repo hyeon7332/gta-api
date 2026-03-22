@@ -10,8 +10,7 @@ import com.gta.dto.OwnedTransportListDto;
 
 @Mapper
 public interface OwnedTransportMapper {
-    List<OwnedTransportListDto> selectOwnedTransportPage(@Param("offset") int offset,
-            											 @Param("size") int size);
+    List<OwnedTransportListDto> selectList();
 
     int selectOwnedTransportCount();
 
@@ -37,4 +36,5 @@ public interface OwnedTransportMapper {
     int deleteByOwnedId(@Param("ownedId") Long ownedId);
 
     int insertOwnedTransportStorage(OwnedTransportCreateRequest req);
+
 }

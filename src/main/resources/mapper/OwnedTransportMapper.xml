@@ -5,7 +5,7 @@
   
 <mapper namespace="com.gta.mapper.OwnedTransportMapper">
 	<!-- 내 보유 이동수단 목록 조회 (모델 + 보관위치 조인) -->
-    <select id="selectOwnedTransportPage" resultType="com.gta.dto.OwnedTransportListDto">
+    <select id="selectList" resultType="com.gta.dto.OwnedTransportListDto">
 	    SELECT
 	        ot.owned_id,
 	        ot.own_status,
@@ -39,7 +39,6 @@
 	        ots.slot_no IS NULL,
 	        ots.slot_no ASC,
 	        ot.owned_id DESC
-	    LIMIT #{size} OFFSET #{offset}
 	</select>
 	
 	<select id="selectOwnedTransportCount" resultType="int">
