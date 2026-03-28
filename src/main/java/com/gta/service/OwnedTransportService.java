@@ -5,6 +5,7 @@ import java.util.List;
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
 import com.gta.dto.OwnedTransportUpdateRequest;
+import com.gta.dto.SwapOwnedTransportRequest;
 
 public interface OwnedTransportService {
 	
@@ -16,5 +17,6 @@ public interface OwnedTransportService {
 
 	void delete(Long ownedId);
 
+	void swapOwnedTransport(SwapOwnedTransportRequest request);
 
 }

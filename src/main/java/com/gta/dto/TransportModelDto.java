@@ -19,6 +19,5 @@ public class TransportModelDto {
     private Integer driveGears;
     private String driveTrain;
     private Integer seats;
-    private String performance;
     private String features;
 }

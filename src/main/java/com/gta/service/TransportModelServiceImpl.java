@@ -54,7 +54,6 @@ public class TransportModelServiceImpl implements TransportModelService {
 
 	@Override
 	public List<TransportModelDto> getOptions() {
-		System.out.println(transportModelMapper.selectOptions());
 		return transportModelMapper.selectOptions();
 	}
 }

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
+import com.gta.dto.OwnedTransportSlotDto;
 
 @Mapper
 public interface OwnedTransportMapper {
@@ -36,5 +37,11 @@ public interface OwnedTransportMapper {
     int deleteByOwnedId(@Param("ownedId") Long ownedId);
 
     int insertOwnedTransportStorage(OwnedTransportCreateRequest req);
+
+	OwnedTransportSlotDto selectStorageByOwnedId(Long ownedId);
+	
+	int updateStorageSlotByOwnedId(@Param("ownedId") Long ownedId,
+							       @Param("garageId") Long garageId,
+							       @Param("slotNo") Integer slotNo);
 
 }

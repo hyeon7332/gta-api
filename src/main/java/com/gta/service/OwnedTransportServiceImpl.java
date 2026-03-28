@@ -9,7 +9,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
+import com.gta.dto.OwnedTransportSlotDto;
 import com.gta.dto.OwnedTransportUpdateRequest;
+import com.gta.dto.SwapOwnedTransportRequest;
 import com.gta.mapper.OwnedTransportMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -124,5 +126,49 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 		if (deleted == 0) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제 대상이 없습니다.");
 		}
+	}
+
+	@Override
+	@Transactional
+	public void swapOwnedTransport(SwapOwnedTransportRequest request) {
+		if (request == null) {
+	        throw new IllegalArgumentException("요청값이 없습니다.");
+	    }
+		
+		Long sourceOwnedId = request.getSourceOwnedId();
+		Long targetOwnedId = request.getTargetOwnedId();
+		
+		if (sourceOwnedId == null || targetOwnedId == null) {
+	        throw new IllegalArgumentException("교체 대상 차량 ID가 없습니다.");
+	    }
+
+	    if (sourceOwnedId.equals(targetOwnedId)) {
+	        throw new IllegalArgumentException("같은 차량끼리는 교체할 수 없습니다.");
+	    }
+	    
+	    OwnedTransportSlotDto source = ownedTransportMapper.selectStorageByOwnedId(sourceOwnedId);
+	    OwnedTransportSlotDto target = ownedTransportMapper.selectStorageByOwnedId(targetOwnedId);
+	    
+	    if (source == null || target == null) {
+	        throw new IllegalArgumentException("교체 대상 차량 정보를 찾을 수 없습니다.");
+	    }
+	    
+	    ownedTransportMapper.updateStorageSlotByOwnedId(
+    	    sourceOwnedId,
+    	    source.getGarageId(),
+    	    -1
+    	);
+
+    	ownedTransportMapper.updateStorageSlotByOwnedId(
+    	    targetOwnedId,
+    	    source.getGarageId(),
+    	    source.getSlotNo()
+    	);
+
+    	ownedTransportMapper.updateStorageSlotByOwnedId(
+    	    sourceOwnedId,
+    	    target.getGarageId(),
+    	    target.getSlotNo()
+    	);
 	}
 }

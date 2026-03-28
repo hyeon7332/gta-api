@@ -22,8 +22,7 @@
 		    drive_gears,
 		    drive_train,
 		    seats,
-		    features,
-		    performance
+		    features
 		FROM transport_model
 		<where>
 		    <if test="keyword != null and keyword != ''">
@@ -70,7 +69,6 @@
             , drive_gears
             , drive_train
             , seats
-            , performance
             , features
         )
         VALUES
@@ -89,7 +87,6 @@
             , #{driveGears}
             , #{driveTrain}
             , #{seats}
-            , #{performance}
             , #{features}
         )
     </insert>
@@ -113,7 +110,6 @@
             , drive_gears = #{request.driveGears}
             , drive_train = #{request.driveTrain}
             , seats = #{request.seats}
-            , performance = #{request.performance}
             , features = #{request.features}
         WHERE model_id = #{modelId}
     </update>
@@ -144,8 +140,7 @@
 	        drive_gears,
 	        drive_train,
 	        seats,
-	        features,
-	        performance
+	        features
 	    FROM transport_model
 	    ORDER BY manufacturer ASC, name ASC, transport_category ASC
 	</select>

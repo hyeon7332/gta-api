@@ -19,6 +19,7 @@
 	        tm.top_speed,
 	        tm.price,
 	        tm.release_date,
+	        tm.upgrade_type,
 	
 	        g.garage_id,
 	        g.name AS garage_name,
@@ -145,4 +146,22 @@
         FROM owned_transport
         WHERE owned_id = #{ownedId}
     </delete>
+    
+    <select id="selectStorageByOwnedId" resultType="com.gta.dto.OwnedTransportSlotDto">
+	    SELECT
+	        owned_id,
+	        garage_id,
+	        slot_no
+	    FROM owned_transport_storage
+	    WHERE owned_id = #{ownedId}
+	</select>
+	
+	<update id="updateStorageSlotByOwnedId">
+	    UPDATE owned_transport_storage
+	    SET
+	        garage_id = #{garageId},
+	        slot_no = #{slotNo},
+	        moved_at = NOW()
+	    WHERE owned_id = #{ownedId}
+	</update>
 </mapper>  

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
 import com.gta.dto.OwnedTransportUpdateRequest;
+import com.gta.dto.SwapOwnedTransportRequest;
 import com.gta.service.OwnedTransportService;
 
 import jakarta.validation.Valid;
@@ -52,5 +53,11 @@ public class OwnedTransportController {
     {
         ownedTransportService.delete(ownedId);
         return ResponseEntity.ok().build();
+    }
+    
+    @PatchMapping("/swap")
+    public ResponseEntity<Void> swap(@RequestBody SwapOwnedTransportRequest request) {
+    	ownedTransportService.swapOwnedTransport(request);
+    	return ResponseEntity.ok().build();
     }
 }

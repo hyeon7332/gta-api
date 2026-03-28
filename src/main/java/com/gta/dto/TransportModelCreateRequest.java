@@ -59,9 +59,6 @@ public class TransportModelCreateRequest {
     /** 좌석 수 */
     private Integer seats;
 
-    /** 성능 */
-    private String performance;
-
     /** 특징 */
     private String features;
 }
