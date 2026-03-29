@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.gta.dto.TransportModelCreateRequest;
@@ -39,12 +40,20 @@ public class TransportModelServiceImpl implements TransportModelService {
 
 	@Override
 	public int createTransportModel(TransportModelCreateRequest request) {
-		return transportModelMapper.insertTransportModel(request);
+		try {
+			return transportModelMapper.insertTransportModel(request);
+		} catch (DuplicateKeyException  e) {
+			throw new IllegalArgumentException("이미 등록된 모델입니다.");
+		}
 	}
 
 	@Override
 	public int updateTransportModel(Long modelId, TransportModelUpdateRequest request) {
-		return transportModelMapper.updateTransportModel(modelId, request);
+		try {
+	        return transportModelMapper.updateTransportModel(modelId, request);
+	    } catch (DuplicateKeyException e) {
+	        throw new IllegalArgumentException("이미 등록된 모델입니다.");
+	    }
 	}
 
 	@Override
