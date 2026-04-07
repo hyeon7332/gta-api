@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.gta.mapper.AuthMapper">
+	<!-- 회원가입 -->
+	<insert id="insertUser" parameterType="com.gta.dto.SignupRequest">
+		INSERT INTO user
+        (
+            login_id,
+            password,
+            nickname,
+            role,
+            status,
+            use_yn
+        )
+        VALUES
+        (
+            #{loginId},
+            #{password},
+            #{nickname},
+            'USER',
+            'PENDING',
+            'Y'
+        ) 
+	</insert>
+	
+	<!-- 회원 중복 체크 -->
+	<select id="countByLoginId" parameterType="string" resultType="int">
+	    SELECT COUNT(*)
+	    FROM user
+	    WHERE login_id = #{loginId}
+	</select>
+	
+	<!-- 로그인 -->
+	<select id="findByLoginId" parameterType="string" resultType="com.gta.entity.User">
+	    SELECT
+	        user_id,
+	        login_id,
+	        password,
+	        nickname,
+	        role,
+	        status,
+	        use_yn,
+	        created_at,
+	        updated_at
+	    FROM user
+	    WHERE login_id = #{loginId}
+	</select>
+	
+	<!-- 관리자 승인 -->
+	<update id="updateUserStatus" parameterType="com.gta.dto.UserApprovalRequest">
+	    UPDATE user
+	    SET
+	        status = #{status},
+	        updated_at = NOW()
+	    WHERE user_id = #{userId}
+	</update>
+	
+	<!-- 승인 대기 회원 목록 조회 -->
+	<select id="selectPendingUsers" resultType="com.gta.dto.PendingUserResponse">
+	    SELECT
+	        user_id,
+	        login_id,
+	        nickname,
+	        role,
+	        status,
+	        use_yn,
+	        created_at
+	    FROM user
+	    WHERE status = 'PENDING'
+	      AND use_yn = 'Y'
+	    ORDER BY created_at DESC
+	</select>
+</mapper>
