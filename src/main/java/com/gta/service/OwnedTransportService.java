@@ -9,14 +9,14 @@ import com.gta.dto.SwapOwnedTransportRequest;
 
 public interface OwnedTransportService {
 	
-	List<OwnedTransportListDto> getList();
+	List<OwnedTransportListDto> getList(Long userId);
 	
-	int create(OwnedTransportCreateRequest req);
+	int create(Long userId, OwnedTransportCreateRequest req);
 
-	void update(Long ownedId, OwnedTransportUpdateRequest request);
+	void update(Long userId, Long ownedId, OwnedTransportUpdateRequest request);
 
-	void delete(Long ownedId);
+	void delete(Long userId, Long ownedId);
 
-	void swapOwnedTransport(SwapOwnedTransportRequest request);
+	void swapOwnedTransport(Long userId, SwapOwnedTransportRequest request);
 
 }

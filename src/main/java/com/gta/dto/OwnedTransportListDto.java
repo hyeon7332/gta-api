@@ -22,7 +22,6 @@ public class OwnedTransportListDto {
 
     private Long garageId;           
     private String garageName;       
-    private String garageType;       
     private Integer slotNo;     
     
     private String upgradeType;

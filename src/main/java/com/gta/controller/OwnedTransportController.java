@@ -18,6 +18,7 @@ import com.gta.dto.OwnedTransportUpdateRequest;
 import com.gta.dto.SwapOwnedTransportRequest;
 import com.gta.service.OwnedTransportService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -29,35 +30,44 @@ public class OwnedTransportController {
 	private final OwnedTransportService ownedTransportService;
     
     @GetMapping
-    public List<OwnedTransportListDto> getList()
+    public List<OwnedTransportListDto> getList(HttpServletRequest request)
     {
-        return ownedTransportService.getList();
+    	Long userId = (Long) request.getAttribute("userId");
+    	return ownedTransportService.getList(userId);
     }
     
     @PostMapping
-    public ResponseEntity<Integer> create(@RequestBody OwnedTransportCreateRequest req)
+    public ResponseEntity<Integer> create(HttpServletRequest request,
+    									  @RequestBody OwnedTransportCreateRequest req)
     {
-        int inserted = ownedTransportService.create(req);
+    	Long userId = (Long) request.getAttribute("userId");
+    	int inserted = ownedTransportService.create(userId, req);
         return ResponseEntity.ok(inserted);
     }
     
     @PatchMapping("/{ownedId}")
-    public void update(@PathVariable Long ownedId,
-                       @RequestBody @Valid OwnedTransportUpdateRequest request)
+    public void update(HttpServletRequest request,
+    				   @PathVariable Long ownedId,
+                       @RequestBody @Valid OwnedTransportUpdateRequest requestBody)
     {
-        ownedTransportService.update(ownedId, request);
+    	Long userId = (Long) request.getAttribute("userId");
+    	ownedTransportService.update(userId, ownedId, requestBody);
     }
     
     @DeleteMapping("/{ownedId}")
-    public ResponseEntity<Void> delete(@PathVariable Long ownedId)
+    public ResponseEntity<Void> delete(HttpServletRequest request,
+    								   @PathVariable Long ownedId)
     {
-        ownedTransportService.delete(ownedId);
+    	Long userId = (Long) request.getAttribute("userId");
+    	ownedTransportService.delete(userId, ownedId);
         return ResponseEntity.ok().build();
     }
     
     @PatchMapping("/swap")
-    public ResponseEntity<Void> swap(@RequestBody SwapOwnedTransportRequest request) {
-    	ownedTransportService.swapOwnedTransport(request);
+    public ResponseEntity<Void> swap(HttpServletRequest request,
+    								 @RequestBody SwapOwnedTransportRequest requestBody) {
+    	Long userId = (Long) request.getAttribute("userId");
+    	ownedTransportService.swapOwnedTransport(userId, requestBody);
     	return ResponseEntity.ok().build();
     }
 }

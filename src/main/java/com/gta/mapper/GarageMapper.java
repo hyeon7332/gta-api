@@ -15,6 +15,7 @@ public interface GarageMapper {
 
 	List<GarageListDto> selectGarageList();
 
-	List<Integer> selectOccupiedSlotsByGarageId(@Param("garageId") Long garageId);
+	List<Integer> selectOccupiedSlotsByGarageId(@Param("garageId") Long garageId,
+											    @Param("userId") Long userId);
 
 }

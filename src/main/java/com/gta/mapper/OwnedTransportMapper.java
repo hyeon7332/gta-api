@@ -11,37 +11,58 @@ import com.gta.dto.OwnedTransportSlotDto;
 
 @Mapper
 public interface OwnedTransportMapper {
-    List<OwnedTransportListDto> selectList();
+	/* 목록 조회 */
+	List<OwnedTransportListDto> selectList(@Param("userId") Long userId);
 
-    int selectOwnedTransportCount();
+	/* 개수 조회 */
+	int selectOwnedTransportCount(@Param("userId") Long userId);
 
     int insertOwnedTransport(OwnedTransportCreateRequest req);
 
-    int deleteById(@Param("ownedId") Long ownedId);
+	/* 삭제 */
+    int deleteById(@Param("ownedId") Long ownedId,
+            	   @Param("userId") Long userId);
 
-    int updateDecal(@Param("ownedId") Long ownedId, @Param("decal") String decal);
+	/* 데칼 수정 */
+    int updateDecal(@Param("ownedId") Long ownedId,
+            		@Param("userId") Long userId,
+            		@Param("decal") String decal);
 
-    int existsByOwnedId(@Param("ownedId") Long ownedId);
+	/* 위치 존재 여부 */
+    int existsByOwnedId(@Param("ownedId") Long ownedId,
+            			@Param("userId") Long userId);
 
+	/* 슬롯 점유 차량 조회 */
     Long selectOwnedIdByGarageAndSlot(@Param("garageId") Long garageId,
-                                      @Param("slotNo") Integer slotNo);
+            						  @Param("slotNo") Integer slotNo,
+            						  @Param("userId") Long userId);
 
+	/* 위치 수정 */
     int updateLocation(@Param("ownedId") Long ownedId,
-                       @Param("garageId") Long garageId,
-                       @Param("slotNo") Integer slotNo);
+			           @Param("garageId") Long garageId,
+			           @Param("slotNo") Integer slotNo,
+			           @Param("userId") Long userId);
 
+	/* 위치 등록 */
     int insertLocation(@Param("ownedId") Long ownedId,
-                       @Param("garageId") Long garageId,
-                       @Param("slotNo") Integer slotNo);
+            		   @Param("garageId") Long garageId,
+            		   @Param("slotNo") Integer slotNo,
+            		   @Param("userId") Long userId);
 
-    int deleteByOwnedId(@Param("ownedId") Long ownedId);
+	/* storage 삭제 */
+    int deleteByOwnedId(@Param("ownedId") Long ownedId,
+            			@Param("userId") Long userId);
 
     int insertOwnedTransportStorage(OwnedTransportCreateRequest req);
 
-	OwnedTransportSlotDto selectStorageByOwnedId(Long ownedId);
+	/* storage 단건 조회 */
+    OwnedTransportSlotDto selectStorageByOwnedId(@Param("ownedId") Long ownedId,
+            									 @Param("userId") Long userId);
 	
-	int updateStorageSlotByOwnedId(@Param("ownedId") Long ownedId,
-							       @Param("garageId") Long garageId,
-							       @Param("slotNo") Integer slotNo);
+	/* storage 슬롯 변경 */
+    int updateStorageSlotByOwnedId(@Param("ownedId") Long ownedId,
+						           @Param("garageId") Long garageId,
+						           @Param("slotNo") Integer slotNo,
+						           @Param("userId") Long userId);
 
 }

@@ -23,7 +23,6 @@
 	
 	        g.garage_id,
 	        g.name AS garage_name,
-	        g.type AS garage_type,
 	        ots.slot_no
 	
 	    FROM owned_transport ot
@@ -33,6 +32,8 @@
 	        ON ots.owned_id = ot.owned_id
 	    LEFT JOIN garage g
 	        ON g.garage_id = ots.garage_id
+	
+	    WHERE ot.user_id = #{userId}
 	
 	    ORDER BY
 	        g.sort_order IS NULL,
@@ -45,6 +46,7 @@
 	<select id="selectOwnedTransportCount" resultType="int">
 	    SELECT COUNT(*)
 	    FROM owned_transport
+	    WHERE user_id = #{userId}
 	</select>
 
     <!-- 보유 이동수단 등록 -->
@@ -54,114 +56,167 @@
             keyProperty="ownedId"
             keyColumn="owned_id">
         INSERT INTO owned_transport
-        (
-            model_id,
-            decal,
-            own_status
-        )
-        VALUES
-        (
-            #{modelId},
-            #{decal},
-            COALESCE(#{ownStatus}, '보유')
-        )
+	    (
+	        model_id,
+	        user_id,
+	        decal,
+	        own_status
+	    )
+	    VALUES
+	    (
+	        #{modelId},
+	        #{userId},
+	        #{decal},
+	        COALESCE(#{ownStatus}, '보유')
+	    )
     </insert>
 
     <!-- 보유 이동수단 보관 위치 등록 -->
     <insert id="insertOwnedTransportStorage"
-            parameterType="com.gta.dto.OwnedTransportCreateRequest">
-        INSERT INTO owned_transport_storage
-        (
-            owned_id,
-            garage_id,
-            slot_no
-        )
-        VALUES
-        (
-            #{ownedId},
-            #{garageId},
-            #{slotNo}
-        )
-    </insert>
+	        parameterType="com.gta.dto.OwnedTransportCreateRequest">
+	    INSERT INTO owned_transport_storage
+	    (
+	        owned_id,
+	        garage_id,
+	        slot_no
+	    )
+	    SELECT
+	        #{ownedId},
+	        #{garageId},
+	        #{slotNo}
+	    FROM dual
+	    WHERE EXISTS
+	    (
+	        SELECT 1
+	        FROM owned_transport ot
+	        WHERE ot.owned_id = #{ownedId}
+	          AND ot.user_id = #{userId}
+	    )
+	    AND EXISTS
+	    (
+	        SELECT 1
+	        FROM garage g
+	        WHERE g.garage_id = #{garageId}
+	          AND g.user_id = #{userId}
+	    )
+	</insert>
 
     <update id="updateDecal">
         UPDATE owned_transport
-        SET decal = #{decal}
-        WHERE owned_id = #{ownedId}
+	    SET decal = #{decal}
+	    WHERE owned_id = #{ownedId}
+	      AND user_id = #{userId}
     </update>
 
     <!-- owned_id 존재 여부 확인 -->
     <select id="existsByOwnedId" resultType="int">
         SELECT COUNT(1)
-        FROM owned_transport_storage
-        WHERE owned_id = #{ownedId}
+        FROM owned_transport_storage ots
+	    INNER JOIN owned_transport ot
+	        ON ot.owned_id = ots.owned_id
+	    WHERE ots.owned_id = #{ownedId}
+	      AND ot.user_id = #{userId}
     </select>
 
     <!-- 해당 차고 + 슬롯에 이미 배치된 owned_id 조회 -->
     <select id="selectOwnedIdByGarageAndSlot" resultType="long">
-        SELECT owned_id
-        FROM owned_transport_storage
-        WHERE garage_id = #{garageId}
-          AND slot_no = #{slotNo}
-        LIMIT 1
+        SELECT ots.owned_id
+	    FROM owned_transport_storage ots
+	    INNER JOIN garage g
+	        ON g.garage_id = ots.garage_id
+	    WHERE ots.garage_id = #{garageId}
+	      AND ots.slot_no = #{slotNo}
+	      AND g.user_id = #{userId}
+	    LIMIT 1
     </select>
 
     <!-- 최초 차고/슬롯 등록 -->
     <insert id="insertLocation">
-        INSERT INTO owned_transport_storage
-        (
-            owned_id,
-            garage_id,
-            slot_no,
-            moved_at
-        )
-        VALUES
-        (
-            #{ownedId},
-            #{garageId},
-            #{slotNo},
-            NOW()
-        )
-    </insert>
+	    INSERT INTO owned_transport_storage
+	    (
+	        owned_id,
+	        garage_id,
+	        slot_no,
+	        moved_at
+	    )
+	    SELECT
+	        #{ownedId},
+	        #{garageId},
+	        #{slotNo},
+	        NOW()
+	    FROM dual
+	    WHERE EXISTS
+	    (
+	        SELECT 1
+	        FROM owned_transport ot
+	        WHERE ot.owned_id = #{ownedId}
+	          AND ot.user_id = #{userId}
+	    )
+	    AND EXISTS
+	    (
+	        SELECT 1
+	        FROM garage g
+	        WHERE g.garage_id = #{garageId}
+	          AND g.user_id = #{userId}
+	    )
+	</insert>
 
     <!-- 차고 + 슬롯 이동 -->
     <update id="updateLocation">
-        UPDATE owned_transport_storage
-        SET garage_id = #{garageId},
-            slot_no = #{slotNo},
-            moved_at = NOW()
-        WHERE owned_id = #{ownedId}
+        UPDATE owned_transport_storage ots
+	    INNER JOIN owned_transport ot
+	        ON ot.owned_id = ots.owned_id
+	    INNER JOIN garage g
+	        ON g.garage_id = #{garageId}
+	    SET ots.garage_id = #{garageId},
+	        ots.slot_no = #{slotNo},
+	        ots.moved_at = NOW()
+	    WHERE ots.owned_id = #{ownedId}
+	      AND ot.user_id = #{userId}
+	      AND g.user_id = #{userId}
     </update>
 
     <!-- 차고/슬롯 제거 -->
     <delete id="deleteByOwnedId">
-        DELETE
-        FROM owned_transport_storage
-        WHERE owned_id = #{ownedId}
-    </delete>
+	    DELETE ots
+	    FROM owned_transport_storage ots
+	    INNER JOIN owned_transport ot
+	        ON ot.owned_id = ots.owned_id
+	    WHERE ots.owned_id = #{ownedId}
+	      AND ot.user_id = #{userId}
+	</delete>
 
     <!-- 보유 이동수단 삭제 -->
     <delete id="deleteById">
-        DELETE
-        FROM owned_transport
-        WHERE owned_id = #{ownedId}
-    </delete>
+	    DELETE
+	    FROM owned_transport
+	    WHERE owned_id = #{ownedId}
+	      AND user_id = #{userId}
+	</delete>
     
     <select id="selectStorageByOwnedId" resultType="com.gta.dto.OwnedTransportSlotDto">
 	    SELECT
-	        owned_id,
-	        garage_id,
-	        slot_no
-	    FROM owned_transport_storage
-	    WHERE owned_id = #{ownedId}
+	        ots.owned_id,
+	        ots.garage_id,
+	        ots.slot_no
+	    FROM owned_transport_storage ots
+	    INNER JOIN owned_transport ot
+	        ON ot.owned_id = ots.owned_id
+	    WHERE ots.owned_id = #{ownedId}
+	      AND ot.user_id = #{userId}
 	</select>
 	
 	<update id="updateStorageSlotByOwnedId">
-	    UPDATE owned_transport_storage
-	    SET
-	        garage_id = #{garageId},
-	        slot_no = #{slotNo},
-	        moved_at = NOW()
-	    WHERE owned_id = #{ownedId}
+	    UPDATE owned_transport_storage ots
+	    INNER JOIN owned_transport ot
+	        ON ot.owned_id = ots.owned_id
+	    INNER JOIN garage g
+	        ON g.garage_id = #{garageId}
+	    SET ots.garage_id = #{garageId},
+	        ots.slot_no = #{slotNo},
+	        ots.moved_at = NOW()
+	    WHERE ots.owned_id = #{ownedId}
+	      AND ot.user_id = #{userId}
+	      AND g.user_id = #{userId}
 	</update>
 </mapper>  

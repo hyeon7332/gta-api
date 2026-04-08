@@ -32,8 +32,8 @@ public class GarageServiceImpl implements GarageService{
 	}
 
 	@Override
-	public List<Integer> getOccupiedSlots(Long garageId) {
-		List<Integer> list = garageMapper.selectOccupiedSlotsByGarageId(garageId);
+	public List<Integer> getOccupiedSlots(Long garageId, Long userId) {
+		List<Integer> list = garageMapper.selectOccupiedSlotsByGarageId(garageId, userId);
 
         if (list == null) {
             list = new ArrayList<>();

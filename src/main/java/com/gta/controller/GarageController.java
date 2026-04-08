@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gta.dto.GarageListDto;
 import com.gta.service.GarageService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -42,8 +43,10 @@ public class GarageController {
      * @return 사용 중 슬롯 번호 목록 (예: [3, 7, 12])
      */
     @GetMapping("/{garageId}/occupied-slots")
-    public List<Integer> getOccupiedSlots(@PathVariable Long garageId)
-    {
-        return garageService.getOccupiedSlots(garageId);
+    public List<Integer> getOccupiedSlots(@PathVariable Long garageId,
+    									  HttpServletRequest request) {
+    	Long userId = (Long) request.getAttribute("userId");
+    	
+    	return garageService.getOccupiedSlots(garageId, userId);
     }
 }

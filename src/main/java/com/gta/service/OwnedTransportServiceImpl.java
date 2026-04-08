@@ -22,17 +22,19 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	private final OwnedTransportMapper ownedTransportMapper;
 	
 	@Override
-	public List<OwnedTransportListDto> getList()
+	public List<OwnedTransportListDto> getList(Long userId)
 	{
-	    return ownedTransportMapper.selectList();
+	    return ownedTransportMapper.selectList(userId);
 	}
 
 	@Override
-	public int create(OwnedTransportCreateRequest req) {
+	public int create(Long userId, OwnedTransportCreateRequest req) {
 		// 기본값 처리
 	    if (req.getOwnStatus() == null || req.getOwnStatus().trim().isEmpty()) {
 	        req.setOwnStatus("보유");
 	    }
+	    
+	    req.setUserId(userId);
 	    
 	    // 차고/슬롯 검증
 	    if (req.getGarageId() == null) {
@@ -67,9 +69,9 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 
 	@Override
 	@Transactional
-	public void update(Long ownedId, OwnedTransportUpdateRequest request) {
+	public void update(Long userId, Long ownedId, OwnedTransportUpdateRequest request) {
 		if (request.getDecal() != null) {
-		    ownedTransportMapper.updateDecal(ownedId, request.getDecal());
+			ownedTransportMapper.updateDecal(ownedId, userId, request.getDecal());
 		}
 
 		if (request.getGarageId() == null && request.getSlotNo() == null) {
@@ -80,11 +82,12 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 		    throw new IllegalArgumentException("차고와 슬롯은 함께 보내야 합니다.");
 		}
 
-	    int exists = ownedTransportMapper.existsByOwnedId(ownedId);
+		int exists = ownedTransportMapper.existsByOwnedId(ownedId, userId);
 
-	    Long occupiedOwnedId = ownedTransportMapper.selectOwnedIdByGarageAndSlot(
+		Long occupiedOwnedId = ownedTransportMapper.selectOwnedIdByGarageAndSlot(
 	        request.getGarageId(),
-	        request.getSlotNo()
+	        request.getSlotNo(),
+	        userId
 	    );
 
 	    if (occupiedOwnedId != null && !occupiedOwnedId.equals(ownedId)) {
@@ -97,7 +100,8 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        int inserted = ownedTransportMapper.insertLocation(
 	            ownedId,
 	            request.getGarageId(),
-	            request.getSlotNo()
+	            request.getSlotNo(),
+	            userId
 	        );
 
 	        if (inserted == 0) {
@@ -110,7 +114,8 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	    int updated = ownedTransportMapper.updateLocation(
 	        ownedId,
 	        request.getGarageId(),
-	        request.getSlotNo()
+	        request.getSlotNo(),
+	        userId
 	    );
 
 	    if (updated == 0) {
@@ -120,8 +125,8 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 
 	@Override
 	@Transactional
-	public void delete(Long ownedId) {
-		int deleted = ownedTransportMapper.deleteById(ownedId);
+	public void delete(Long userId, Long ownedId) {
+		int deleted = ownedTransportMapper.deleteById(ownedId, userId);
 		
 		if (deleted == 0) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제 대상이 없습니다.");
@@ -130,7 +135,7 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 
 	@Override
 	@Transactional
-	public void swapOwnedTransport(SwapOwnedTransportRequest request) {
+	public void swapOwnedTransport(Long userId, SwapOwnedTransportRequest request) {
 		if (request == null) {
 	        throw new IllegalArgumentException("요청값이 없습니다.");
 	    }
@@ -146,8 +151,8 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        throw new IllegalArgumentException("같은 차량끼리는 교체할 수 없습니다.");
 	    }
 	    
-	    OwnedTransportSlotDto source = ownedTransportMapper.selectStorageByOwnedId(sourceOwnedId);
-	    OwnedTransportSlotDto target = ownedTransportMapper.selectStorageByOwnedId(targetOwnedId);
+	    OwnedTransportSlotDto source = ownedTransportMapper.selectStorageByOwnedId(sourceOwnedId, userId);
+	    OwnedTransportSlotDto target = ownedTransportMapper.selectStorageByOwnedId(targetOwnedId, userId);
 	    
 	    if (source == null || target == null) {
 	        throw new IllegalArgumentException("교체 대상 차량 정보를 찾을 수 없습니다.");
@@ -156,19 +161,22 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	    ownedTransportMapper.updateStorageSlotByOwnedId(
     	    sourceOwnedId,
     	    source.getGarageId(),
-    	    -1
+    	    -1,
+    	    userId
     	);
 
     	ownedTransportMapper.updateStorageSlotByOwnedId(
     	    targetOwnedId,
     	    source.getGarageId(),
-    	    source.getSlotNo()
+    	    source.getSlotNo(),
+    	    userId
     	);
 
     	ownedTransportMapper.updateStorageSlotByOwnedId(
     	    sourceOwnedId,
     	    target.getGarageId(),
-    	    target.getSlotNo()
+    	    target.getSlotNo(),
+    	    userId
     	);
 	}
 }

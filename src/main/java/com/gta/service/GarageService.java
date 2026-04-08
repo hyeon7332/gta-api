@@ -11,6 +11,6 @@ public interface GarageService {
 
 	List<GarageListDto> getList();
 
-	List<Integer> getOccupiedSlots(Long garageId);
+	List<Integer> getOccupiedSlots(Long garageId, Long userId);
 
 }

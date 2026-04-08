@@ -13,6 +13,9 @@ public class OwnedTransportCreateRequest {
     /** 이동수단 모델 ID */
     private Long modelId;
     
+    /** 소유 회원 ID */
+    private Long userId;
+    
     /** 상징 */
     private String decal;
 

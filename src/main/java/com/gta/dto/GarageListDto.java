@@ -13,7 +13,6 @@ import lombok.ToString;
 public class GarageListDto {
 	private Long garageId;    
     private String name;      
-    private String type;      
     private Integer capacity; 
     private Integer sortOrder;
 }

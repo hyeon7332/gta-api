@@ -7,7 +7,6 @@
 	<resultMap id="GarageListMap" type="com.gta.dto.GarageListDto">
     	<id property="garageId" column="garage_id"/>
     	<result property="name" column="name"/>
-    	<result property="type" column="type"/>
     	<result property="capacity" column="capacity"/>
     	<result property="sortOrder" column="sort_order"/>
   	</resultMap>
@@ -16,7 +15,6 @@
 		SELECT
 			garage_id,
 	      	name,
-	      	type,
 	      	capacity,
 	      	sort_order
 	    FROM garage
@@ -25,9 +23,12 @@
 
 	<select id="selectOccupiedSlotsByGarageId" resultType="int">
 		SELECT
-	    	slot_no
-	  	FROM owned_transport_storage
-	  	WHERE garage_id = #{garageId}
-	  	ORDER BY slot_no ASC
+	        ots.slot_no
+	    FROM owned_transport_storage ots
+	    INNER JOIN owned_transport ot
+	        ON ot.owned_id = ots.owned_id
+	    WHERE ots.garage_id = #{garageId}
+	      AND ot.user_id = #{userId}
+	    ORDER BY ots.slot_no ASC
 	</select>
 </mapper>
