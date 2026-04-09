@@ -21,7 +21,7 @@ public interface TransportModelService {
 	 * @param page 
 	 * @return 이동수단 모델 목록
 	 */
-	Map<String, Object> getList(String keyword, int page, int size);
+	Map<String, Object> getList(String keyword, int page, int size, String sort);
 	
 	/**
      * 이동수단 모델 등록

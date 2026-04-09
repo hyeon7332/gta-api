@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,9 +40,10 @@ public class TransportModelController {
 	@GetMapping
 	public Map<String, Object> getList(@RequestParam(required = false) String keyword,
 									   @RequestParam(defaultValue = "1") int page,
-								       @RequestParam(defaultValue = "15") int size)
+								       @RequestParam(defaultValue = "15") int size,
+								       @RequestParam(required = false) String sort) 
 	{
-		return transportModelService.getList(keyword, page, size);
+		return transportModelService.getList(keyword, page, size, sort);
 	}
 	
 	/**
@@ -49,7 +52,7 @@ public class TransportModelController {
      * @param request 등록 요청 DTO
      * @return 등록 건수
      */
-    @org.springframework.web.bind.annotation.PostMapping
+    @PostMapping
     public ResponseEntity<Integer> createTransportModel(@Valid @RequestBody TransportModelCreateRequest request) {
         int inserted = transportModelService.createTransportModel(request);
         return ResponseEntity.ok(inserted);
@@ -62,7 +65,7 @@ public class TransportModelController {
      * @param request 수정 요청 DTO
      * @return 수정 건수
      */
-    @org.springframework.web.bind.annotation.PutMapping("/{modelId}")
+    @PutMapping("/{modelId}")
     public ResponseEntity<Integer> updateTransportModel(@PathVariable Long modelId,
                                                         @Valid @RequestBody TransportModelUpdateRequest request) {
         int updated = transportModelService.updateTransportModel(modelId, request);

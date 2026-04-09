@@ -14,7 +14,8 @@ public interface TransportModelMapper {
 	
 	List<TransportModelDto> selectList(@Param("keyword") String keyword,
 	        						   @Param("offset") int offset,
-	        						   @Param("size") int size
+	        						   @Param("size") int size,
+	        						   @Param("sort") String sort
 	);
 
 	int selectCount(@Param("keyword") String keyword);

@@ -21,11 +21,11 @@ public class TransportModelServiceImpl implements TransportModelService {
 	private final TransportModelMapper transportModelMapper;
 
 	@Override
-	public Map<String, Object> getList(String keyword, int page, int size) {
+	public Map<String, Object> getList(String keyword, int page, int size, String sort) {
 		int offset = (page - 1) * size;
 
 	    List<TransportModelDto> list =
-	            transportModelMapper.selectList(keyword, offset, size);
+	    		transportModelMapper.selectList(keyword, offset, size, sort);
 
 	    int total =
 	            transportModelMapper.selectCount(keyword);

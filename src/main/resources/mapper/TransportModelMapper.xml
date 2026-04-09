@@ -32,10 +32,71 @@
 		        )
 		    </if>
 		</where>
-		ORDER BY manufacturer ASC,
-    			 transport_category ASC,
-    			 name ASC
-		LIMIT #{size} OFFSET #{offset}
+		<choose>
+		    <!-- 제조사 -->
+		    <when test="sort == 'manufacturer_asc'">
+		        ORDER BY manufacturer ASC
+		    </when>
+		    <when test="sort == 'manufacturer_desc'">
+		        ORDER BY manufacturer DESC
+		    </when>
+		
+		    <!-- 모델명 -->
+		    <when test="sort == 'name_asc'">
+		        ORDER BY name ASC
+		    </when>
+		    <when test="sort == 'name_desc'">
+		        ORDER BY name DESC
+		    </when>
+		
+		    <!-- 분류 -->
+		    <when test="sort == 'category_asc'">
+		        ORDER BY transport_category ASC
+		    </when>
+		    <when test="sort == 'category_desc'">
+		        ORDER BY transport_category DESC
+		    </when>
+		
+		    <!-- 랩타임 -->
+		    <when test="sort == 'lapTime_asc'">
+		        ORDER BY lap_time ASC
+		    </when>
+		    <when test="sort == 'lapTime_desc'">
+		        ORDER BY lap_time DESC
+		    </when>
+		
+		    <!-- 최고속도 -->
+		    <when test="sort == 'topSpeed_asc'">
+		        ORDER BY top_speed ASC
+		    </when>
+		    <when test="sort == 'topSpeed_desc'">
+		        ORDER BY top_speed DESC
+		    </when>
+		
+		    <!-- 가격 -->
+		    <when test="sort == 'price_asc'">
+		        ORDER BY price ASC
+		    </when>
+		    <when test="sort == 'price_desc'">
+		        ORDER BY price DESC
+		    </when>
+		
+		    <!-- 출시일 -->
+		    <when test="sort == 'releaseDate_asc'">
+		        ORDER BY release_date ASC
+		    </when>
+		    <when test="sort == 'releaseDate_desc'">
+		        ORDER BY release_date DESC
+		    </when>
+		
+		    <!-- 기본 정렬 -->
+		    <otherwise>
+		        ORDER BY manufacturer ASC,
+		                 transport_category ASC,
+		                 name ASC
+		    </otherwise>
+		</choose>
+		LIMIT #{offset}, #{size}
 	</select>
 	
 	<select id="selectCount" resultType="int">
