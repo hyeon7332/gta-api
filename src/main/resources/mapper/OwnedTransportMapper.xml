@@ -78,12 +78,14 @@
 	    (
 	        owned_id,
 	        garage_id,
-	        slot_no
+	        slot_no,
+	        user_id
 	    )
 	    SELECT
 	        #{ownedId},
 	        #{garageId},
-	        #{slotNo}
+	        #{slotNo},
+	        #{userId}
 	    FROM dual
 	    WHERE EXISTS
 	    (
@@ -97,7 +99,6 @@
 	        SELECT 1
 	        FROM garage g
 	        WHERE g.garage_id = #{garageId}
-	          AND g.user_id = #{userId}
 	    )
 	</insert>
 
@@ -110,25 +111,21 @@
 
     <!-- owned_id 존재 여부 확인 -->
     <select id="existsByOwnedId" resultType="int">
-        SELECT COUNT(1)
-        FROM owned_transport_storage ots
-	    INNER JOIN owned_transport ot
-	        ON ot.owned_id = ots.owned_id
+	    SELECT COUNT(1)
+	    FROM owned_transport_storage ots
 	    WHERE ots.owned_id = #{ownedId}
-	      AND ot.user_id = #{userId}
-    </select>
+	      AND ots.user_id = #{userId}
+	</select>
 
     <!-- 해당 차고 + 슬롯에 이미 배치된 owned_id 조회 -->
     <select id="selectOwnedIdByGarageAndSlot" resultType="long">
-        SELECT ots.owned_id
+	    SELECT ots.owned_id
 	    FROM owned_transport_storage ots
-	    INNER JOIN garage g
-	        ON g.garage_id = ots.garage_id
-	    WHERE ots.garage_id = #{garageId}
+	    WHERE ots.user_id = #{userId}
+	      AND ots.garage_id = #{garageId}
 	      AND ots.slot_no = #{slotNo}
-	      AND g.user_id = #{userId}
 	    LIMIT 1
-    </select>
+	</select>
 
     <!-- 최초 차고/슬롯 등록 -->
     <insert id="insertLocation">
@@ -137,12 +134,14 @@
 	        owned_id,
 	        garage_id,
 	        slot_no,
+	        user_id,
 	        moved_at
 	    )
 	    SELECT
 	        #{ownedId},
 	        #{garageId},
 	        #{slotNo},
+	        #{userId},
 	        NOW()
 	    FROM dual
 	    WHERE EXISTS
@@ -157,33 +156,26 @@
 	        SELECT 1
 	        FROM garage g
 	        WHERE g.garage_id = #{garageId}
-	          AND g.user_id = #{userId}
 	    )
 	</insert>
 
     <!-- 차고 + 슬롯 이동 -->
     <update id="updateLocation">
-        UPDATE owned_transport_storage ots
-	    INNER JOIN owned_transport ot
-	        ON ot.owned_id = ots.owned_id
-	    INNER JOIN garage g
-	        ON g.garage_id = #{garageId}
-	    SET ots.garage_id = #{garageId},
-	        ots.slot_no = #{slotNo},
-	        ots.moved_at = NOW()
-	    WHERE ots.owned_id = #{ownedId}
-	      AND ot.user_id = #{userId}
-	      AND g.user_id = #{userId}
-    </update>
+	    UPDATE owned_transport_storage
+	    SET garage_id = #{garageId},
+	        slot_no = #{slotNo},
+	        user_id = #{userId},
+	        moved_at = NOW()
+	    WHERE owned_id = #{ownedId}
+	      AND user_id = #{userId}
+	</update>
 
     <!-- 차고/슬롯 제거 -->
     <delete id="deleteByOwnedId">
-	    DELETE ots
-	    FROM owned_transport_storage ots
-	    INNER JOIN owned_transport ot
-	        ON ot.owned_id = ots.owned_id
-	    WHERE ots.owned_id = #{ownedId}
-	      AND ot.user_id = #{userId}
+	    DELETE
+	    FROM owned_transport_storage
+	    WHERE owned_id = #{ownedId}
+	      AND user_id = #{userId}
 	</delete>
 
     <!-- 보유 이동수단 삭제 -->
@@ -196,27 +188,21 @@
     
     <select id="selectStorageByOwnedId" resultType="com.gta.dto.OwnedTransportSlotDto">
 	    SELECT
-	        ots.owned_id,
-	        ots.garage_id,
-	        ots.slot_no
-	    FROM owned_transport_storage ots
-	    INNER JOIN owned_transport ot
-	        ON ot.owned_id = ots.owned_id
-	    WHERE ots.owned_id = #{ownedId}
-	      AND ot.user_id = #{userId}
+	        owned_id,
+	        garage_id,
+	        slot_no
+	    FROM owned_transport_storage
+	    WHERE owned_id = #{ownedId}
+	      AND user_id = #{userId}
 	</select>
 	
 	<update id="updateStorageSlotByOwnedId">
-	    UPDATE owned_transport_storage ots
-	    INNER JOIN owned_transport ot
-	        ON ot.owned_id = ots.owned_id
-	    INNER JOIN garage g
-	        ON g.garage_id = #{garageId}
-	    SET ots.garage_id = #{garageId},
-	        ots.slot_no = #{slotNo},
-	        ots.moved_at = NOW()
-	    WHERE ots.owned_id = #{ownedId}
-	      AND ot.user_id = #{userId}
-	      AND g.user_id = #{userId}
+	    UPDATE owned_transport_storage
+	    SET garage_id = #{garageId},
+	        slot_no = #{slotNo},
+	        user_id = #{userId},
+	        moved_at = NOW()
+	    WHERE owned_id = #{ownedId}
+	      AND user_id = #{userId}
 	</update>
 </mapper>  
