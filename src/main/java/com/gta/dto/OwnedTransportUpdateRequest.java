@@ -16,4 +16,7 @@ public class OwnedTransportUpdateRequest {
 
     @Min(value = 1, message = "slotNo는 1 이상이어야 합니다.")
     private Integer slotNo;
+    
+    /* 보관 상태 */
+    private String storageType;
 }

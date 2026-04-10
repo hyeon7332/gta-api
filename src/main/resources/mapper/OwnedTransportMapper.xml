@@ -22,8 +22,16 @@
 	        tm.upgrade_type,
 	
 	        g.garage_id,
-	        g.name AS garage_name,
-	        ots.slot_no
+			CASE
+			    WHEN ot.storage_type = 'PEGASUS' THEN '페가수스'
+			    WHEN ot.storage_type = 'UNASSIGNED' THEN '미배치'
+			    ELSE g.name
+			END AS garage_name,
+			CASE
+			    WHEN ot.storage_type IN ('PEGASUS', 'UNASSIGNED') THEN NULL
+			    ELSE ots.slot_no
+			END AS slot_no,
+			ot.storage_type
 	
 	    FROM owned_transport ot
 	    INNER JOIN transport_model tm
@@ -60,14 +68,16 @@
 	        model_id,
 	        user_id,
 	        decal,
-	        own_status
+	        own_status,
+	        storage_type
 	    )
 	    VALUES
 	    (
 	        #{modelId},
 	        #{userId},
 	        #{decal},
-	        COALESCE(#{ownStatus}, '보유')
+	        COALESCE(#{ownStatus}, '보유'),
+	        #{storageType}
 	    )
     </insert>
 
@@ -202,6 +212,13 @@
 	        slot_no = #{slotNo},
 	        user_id = #{userId},
 	        moved_at = NOW()
+	    WHERE owned_id = #{ownedId}
+	      AND user_id = #{userId}
+	</update>
+	
+	<update id="updateStorageType">
+	    UPDATE owned_transport
+	    SET storage_type = #{storageType}
 	    WHERE owned_id = #{ownedId}
 	      AND user_id = #{userId}
 	</update>

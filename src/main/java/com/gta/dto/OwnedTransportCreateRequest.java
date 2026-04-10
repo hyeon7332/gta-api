@@ -27,4 +27,7 @@ public class OwnedTransportCreateRequest {
 
     /** 슬롯 번호 (차고 선택 시 필수) */
     private Integer slotNo;
+    
+	/* 보관 상태 */
+    private String storageType;
 }

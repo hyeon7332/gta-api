@@ -25,4 +25,5 @@ public class OwnedTransportListDto {
     private Integer slotNo;     
     
     private String upgradeType;
+    private String storageType;
 }

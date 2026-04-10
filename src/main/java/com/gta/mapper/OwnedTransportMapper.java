@@ -65,4 +65,7 @@ public interface OwnedTransportMapper {
 						           @Param("slotNo") Integer slotNo,
 						           @Param("userId") Long userId);
 
+    int updateStorageType(@Param("ownedId") Long ownedId,
+				    	  @Param("userId") Long userId,
+				    	  @Param("storageType") String storageType);
 }

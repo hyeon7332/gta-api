@@ -36,14 +36,21 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	    
 	    req.setUserId(userId);
 	    
+	    String storageType = req.getStorageType();
+	    
+	    if (storageType == null || storageType.trim().isEmpty()) {
+	        req.setStorageType("UNASSIGNED");
+	        storageType = req.getStorageType();
+	    }
+	    
 	    // 차고/슬롯 검증
-	    if (req.getGarageId() == null) {
-	        if (req.getSlotNo() != null) {
-	            throw new IllegalArgumentException("차고를 선택하지 않으면 슬롯을 선택할 수 없습니다.");
+	    if ("GARAGE".equals(storageType)) {
+	        if (req.getGarageId() == null || req.getSlotNo() == null) {
+	            throw new IllegalArgumentException("차고 보관은 차고와 슬롯이 모두 필요합니다.");
 	        }
 	    } else {
-	        if (req.getSlotNo() == null) {
-	            throw new IllegalArgumentException("차고를 선택한 경우 슬롯은 필수입니다.");
+	        if (req.getGarageId() != null || req.getSlotNo() != null) {
+	            throw new IllegalArgumentException("차고 보관이 아닌 경우 차고와 슬롯은 저장할 수 없습니다.");
 	        }
 	    }
 		
@@ -58,10 +65,10 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	    if (req.getOwnedId() == null) {
 	        throw new IllegalStateException("ownedId 생성값을 받지 못했습니다. Mapper XML의 키 설정을 확인하세요.");
 	    }
-
-	    // 차고 + 슬롯이 모두 선택된 경우만 storage insert
-	    if (req.getGarageId() != null && req.getSlotNo() != null) {
-	    	ownedTransportMapper.insertOwnedTransportStorage(req);
+	    
+	    // GARAGE 인 경우만 storage insert
+	    if ("GARAGE".equals(req.getStorageType())) {
+	        ownedTransportMapper.insertOwnedTransportStorage(req);
 	    }
 
 	    return inserted;
@@ -71,20 +78,36 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	@Transactional
 	public void update(Long userId, Long ownedId, OwnedTransportUpdateRequest request) {
 		if (request.getDecal() != null) {
-			ownedTransportMapper.updateDecal(ownedId, userId, request.getDecal());
-		}
+	        ownedTransportMapper.updateDecal(ownedId, userId, request.getDecal());
+	    }
 
-		if (request.getGarageId() == null && request.getSlotNo() == null) {
-		    return;
-		}
+	    String storageType = request.getStorageType();
 
-		if (request.getGarageId() == null || request.getSlotNo() == null) {
-		    throw new IllegalArgumentException("차고와 슬롯은 함께 보내야 합니다.");
-		}
+	    if (storageType == null || storageType.trim().isEmpty()) {
+	        storageType = "UNASSIGNED";
+	        request.setStorageType(storageType);
+	    }
 
-		int exists = ownedTransportMapper.existsByOwnedId(ownedId, userId);
+	    if ("GARAGE".equals(storageType)) {
+	        if (request.getGarageId() == null || request.getSlotNo() == null) {
+	            throw new IllegalArgumentException("차고 보관은 차고와 슬롯이 모두 필요합니다.");
+	        }
+	    } else {
+	        if (request.getGarageId() != null || request.getSlotNo() != null) {
+	            throw new IllegalArgumentException("차고 보관이 아닌 경우 차고와 슬롯은 저장할 수 없습니다.");
+	        }
+	    }
 
-		Long occupiedOwnedId = ownedTransportMapper.selectOwnedIdByGarageAndSlot(
+	    ownedTransportMapper.updateStorageType(ownedId, userId, storageType);
+
+	    if (!"GARAGE".equals(storageType)) {
+	        ownedTransportMapper.deleteByOwnedId(ownedId, userId);
+	        return;
+	    }
+
+	    int exists = ownedTransportMapper.existsByOwnedId(ownedId, userId);
+
+	    Long occupiedOwnedId = ownedTransportMapper.selectOwnedIdByGarageAndSlot(
 	        request.getGarageId(),
 	        request.getSlotNo(),
 	        userId
