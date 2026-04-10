@@ -20,4 +20,5 @@ public class TransportModelDto {
     private String driveTrain;
     private Integer seats;
     private String features;
+    private Integer ownedCount;
 }

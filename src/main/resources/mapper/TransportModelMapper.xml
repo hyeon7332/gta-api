@@ -6,97 +6,93 @@
   <mapper namespace="com.gta.mapper.TransportModelMapper">
   	<!-- 이동수단 모델 목록 조회 -->
   	<select id="selectList" resultType="com.gta.dto.TransportModelDto">
-		SELECT
-		    model_id,
-		    manufacturer,
-		    name,
-		    transport_category,
-		    upgrade_type,
-		    upgrade_location,
-		    lap_time,
-		    top_speed,
-		    price,
-		    release_date,
-		    source,
-		    weight,
-		    drive_gears,
-		    drive_train,
-		    seats,
-		    features
-		FROM transport_model
-		<where>
-		    <if test="keyword != null and keyword != ''">
-		        AND (
-		            manufacturer LIKE CONCAT('%', #{keyword}, '%')
-		            OR name LIKE CONCAT('%', #{keyword}, '%')
-		        )
-		    </if>
-		</where>
-		<choose>
-		    <!-- 제조사 -->
-		    <when test="sort == 'manufacturer_asc'">
-		        ORDER BY manufacturer ASC
-		    </when>
-		    <when test="sort == 'manufacturer_desc'">
-		        ORDER BY manufacturer DESC
-		    </when>
-		
-		    <!-- 모델명 -->
-		    <when test="sort == 'name_asc'">
-		        ORDER BY name ASC
-		    </when>
-		    <when test="sort == 'name_desc'">
-		        ORDER BY name DESC
-		    </when>
-		
-		    <!-- 분류 -->
-		    <when test="sort == 'category_asc'">
-		        ORDER BY transport_category ASC
-		    </when>
-		    <when test="sort == 'category_desc'">
-		        ORDER BY transport_category DESC
-		    </when>
-		
-		    <!-- 랩타임 -->
-		    <when test="sort == 'lapTime_asc'">
-		        ORDER BY lap_time ASC
-		    </when>
-		    <when test="sort == 'lapTime_desc'">
-		        ORDER BY lap_time DESC
-		    </when>
-		
-		    <!-- 최고속도 -->
-		    <when test="sort == 'topSpeed_asc'">
-		        ORDER BY top_speed ASC
-		    </when>
-		    <when test="sort == 'topSpeed_desc'">
-		        ORDER BY top_speed DESC
-		    </when>
-		
-		    <!-- 가격 -->
-		    <when test="sort == 'price_asc'">
-		        ORDER BY price ASC
-		    </when>
-		    <when test="sort == 'price_desc'">
-		        ORDER BY price DESC
-		    </when>
-		
-		    <!-- 출시일 -->
-		    <when test="sort == 'releaseDate_asc'">
-		        ORDER BY release_date ASC
-		    </when>
-		    <when test="sort == 'releaseDate_desc'">
-		        ORDER BY release_date DESC
-		    </when>
-		
-		    <!-- 기본 정렬 -->
-		    <otherwise>
-		        ORDER BY manufacturer ASC,
-		                 transport_category ASC,
-		                 name ASC
-		    </otherwise>
-		</choose>
-		LIMIT #{offset}, #{size}
+	    SELECT
+	        tm.model_id,
+	        tm.manufacturer,
+	        tm.name,
+	        tm.transport_category,
+	        tm.upgrade_type,
+	        tm.upgrade_location,
+	        tm.lap_time,
+	        tm.top_speed,
+	        tm.price,
+	        tm.release_date,
+	        tm.source,
+	        tm.weight,
+	        tm.drive_gears,
+	        tm.drive_train,
+	        tm.seats,
+	        tm.features,
+	        COUNT(ot.owned_id) AS owned_count
+	    FROM transport_model tm
+	    LEFT JOIN owned_transport ot
+	        ON ot.model_id = tm.model_id
+	    <where>
+	        <if test="keyword != null and keyword != ''">
+	            AND (
+	                tm.manufacturer LIKE CONCAT('%', #{keyword}, '%')
+	                OR tm.name LIKE CONCAT('%', #{keyword}, '%')
+	            )
+	        </if>
+	    </where>
+	    GROUP BY tm.model_id
+	    <choose>
+	        <when test="sort == 'manufacturer_asc'">
+	            ORDER BY tm.manufacturer ASC
+	        </when>
+	        <when test="sort == 'manufacturer_desc'">
+	            ORDER BY tm.manufacturer DESC
+	        </when>
+	
+	        <when test="sort == 'name_asc'">
+	            ORDER BY tm.name ASC
+	        </when>
+	        <when test="sort == 'name_desc'">
+	            ORDER BY tm.name DESC
+	        </when>
+	
+	        <when test="sort == 'category_asc'">
+	            ORDER BY tm.transport_category ASC
+	        </when>
+	        <when test="sort == 'category_desc'">
+	            ORDER BY tm.transport_category DESC
+	        </when>
+	
+	        <when test="sort == 'lapTime_asc'">
+	            ORDER BY tm.lap_time ASC
+	        </when>
+	        <when test="sort == 'lapTime_desc'">
+	            ORDER BY tm.lap_time DESC
+	        </when>
+	
+	        <when test="sort == 'topSpeed_asc'">
+	            ORDER BY tm.top_speed ASC
+	        </when>
+	        <when test="sort == 'topSpeed_desc'">
+	            ORDER BY tm.top_speed DESC
+	        </when>
+	
+	        <when test="sort == 'price_asc'">
+	            ORDER BY tm.price ASC
+	        </when>
+	        <when test="sort == 'price_desc'">
+	            ORDER BY tm.price DESC
+	        </when>
+	
+	        <when test="sort == 'releaseDate_asc'">
+	            ORDER BY tm.release_date ASC
+	        </when>
+	        <when test="sort == 'releaseDate_desc'">
+	            ORDER BY tm.release_date DESC
+	        </when>
+	
+	        <otherwise>
+	            ORDER BY tm.manufacturer ASC,
+	                     tm.transport_category ASC,
+	                     tm.name ASC
+	        </otherwise>
+	    </choose>
+	    LIMIT #{offset}, #{size}
 	</select>
 	
 	<select id="selectCount" resultType="int">
