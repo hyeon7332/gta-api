@@ -77,10 +77,6 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	@Override
 	@Transactional
 	public void update(Long userId, Long ownedId, OwnedTransportUpdateRequest request) {
-		if (request.getDecal() != null) {
-	        ownedTransportMapper.updateDecal(ownedId, userId, request.getDecal());
-	    }
-
 	    String storageType = request.getStorageType();
 
 	    if (storageType == null || storageType.trim().isEmpty()) {

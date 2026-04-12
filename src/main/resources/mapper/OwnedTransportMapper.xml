@@ -12,7 +12,6 @@
 	        tm.manufacturer,
 	        tm.name,
 	        tm.transport_category,
-	        ot.decal,
 	        tm.lap_time,
 	        tm.top_speed,
 	        tm.price,
@@ -65,14 +64,12 @@
 	    (
 	        model_id,
 	        user_id,
-	        decal,
 	        storage_type
 	    )
 	    VALUES
 	    (
 	        #{modelId},
 	        #{userId},
-	        #{decal},
 	        #{storageType}
 	    )
     </insert>
@@ -107,13 +104,6 @@
 	        WHERE g.garage_id = #{garageId}
 	    )
 	</insert>
-
-    <update id="updateDecal">
-        UPDATE owned_transport
-	    SET decal = #{decal}
-	    WHERE owned_id = #{ownedId}
-	      AND user_id = #{userId}
-    </update>
 
     <!-- owned_id 존재 여부 확인 -->
     <select id="existsByOwnedId" resultType="int">

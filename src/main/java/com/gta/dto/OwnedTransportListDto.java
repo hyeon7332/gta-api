@@ -9,21 +9,16 @@ import lombok.Data;
 @Data
 public class OwnedTransportListDto {
 	private Long ownedId;            
-
     private Long modelId;            
     private String manufacturer;     
     private String name;             
     private String transportCategory;
-    private String decal;
     private Long price;            
     private String releaseDate;      
-
     private String ownStatus;        
-
     private Long garageId;           
     private String garageName;       
     private Integer slotNo;     
-    
     private String upgradeType;
     private String storageType;
 }

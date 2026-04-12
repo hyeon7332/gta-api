@@ -15,9 +15,6 @@ public class OwnedTransportCreateRequest {
     
     /** 소유 회원 ID */
     private Long userId;
-    
-    /** 상징 */
-    private String decal;
 
     /** 보유 상태 (기본: 보유) */
     private String ownStatus;

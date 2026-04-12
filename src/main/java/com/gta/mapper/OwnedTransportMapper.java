@@ -23,11 +23,6 @@ public interface OwnedTransportMapper {
     int deleteById(@Param("ownedId") Long ownedId,
             	   @Param("userId") Long userId);
 
-	/* 데칼 수정 */
-    int updateDecal(@Param("ownedId") Long ownedId,
-            		@Param("userId") Long userId,
-            		@Param("decal") String decal);
-
 	/* 위치 존재 여부 */
     int existsByOwnedId(@Param("ownedId") Long ownedId,
             			@Param("userId") Long userId);
