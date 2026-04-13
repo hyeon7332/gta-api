@@ -50,9 +50,6 @@ public class TransportModelUpdateRequest {
     /** 차량 무게 */
     private BigDecimal weight;
 
-    /** 기어 수 */
-    private Integer driveGears;
-
     /** 구동 방식 */
     private String driveTrain;
 

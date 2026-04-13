@@ -19,7 +19,6 @@
 	        tm.release_date,
 	        tm.source,
 	        tm.weight,
-	        tm.drive_gears,
 	        tm.drive_train,
 	        tm.seats,
 	        tm.features,
@@ -123,7 +122,6 @@
             , release_date
             , source
             , weight
-            , drive_gears
             , drive_train
             , seats
             , features
@@ -141,7 +139,6 @@
             , #{releaseDate}
             , #{source}
             , #{weight}
-            , #{driveGears}
             , #{driveTrain}
             , #{seats}
             , #{features}
@@ -164,7 +161,6 @@
             , release_date = #{request.releaseDate}
             , source = #{request.source}
             , weight = #{request.weight}
-            , drive_gears = #{request.driveGears}
             , drive_train = #{request.driveTrain}
             , seats = #{request.seats}
             , features = #{request.features}
@@ -194,7 +190,6 @@
 	        release_date,
 	        source,
 	        weight,
-	        drive_gears,
 	        drive_train,
 	        seats,
 	        features
