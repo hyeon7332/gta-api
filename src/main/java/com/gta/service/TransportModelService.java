@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.gta.dto.TransportModelCreateRequest;
 import com.gta.dto.TransportModelDto;
+import com.gta.dto.TransportModelSearchRequest;
 import com.gta.dto.TransportModelUpdateRequest;
 
 
@@ -16,12 +17,10 @@ public interface TransportModelService {
 	/**
 	 * 이동수단 모델 목록 조회
 	 * 
-	 * @param keyword 검색어
-	 * @param size 
-	 * @param page 
+	 * @param request
 	 * @return 이동수단 모델 목록
 	 */
-	Map<String, Object> getList(String keyword, int page, int size, String sort);
+	Map<String, Object> getList(TransportModelSearchRequest request);
 	
 	/**
      * 이동수단 모델 등록

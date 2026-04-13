@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.gta.dto.TransportModelCreateRequest;
 import com.gta.dto.TransportModelDto;
+import com.gta.dto.TransportModelSearchRequest;
 import com.gta.dto.TransportModelUpdateRequest;
 import com.gta.mapper.TransportModelMapper;
 
@@ -21,19 +22,22 @@ public class TransportModelServiceImpl implements TransportModelService {
 	private final TransportModelMapper transportModelMapper;
 
 	@Override
-	public Map<String, Object> getList(String keyword, int page, int size, String sort) {
-		int offset = (page - 1) * size;
-
-	    List<TransportModelDto> list =
-	    		transportModelMapper.selectList(keyword, offset, size, sort);
-
-	    int total =
-	            transportModelMapper.selectCount(keyword);
-
-	    Map<String, Object> result = new HashMap<>();
-
-	    result.put("items", list);
-	    result.put("total", total);
+	public Map<String, Object> getList(TransportModelSearchRequest request) {
+		int offset = (request.getPage() - 1) * request.getSize();
+		
+		List<TransportModelDto> list = transportModelMapper.selectList(
+            request,
+            offset,
+            request.getSize()
+        );
+		
+		int total = transportModelMapper.selectCount(request);
+		
+		Map<String, Object> result = new HashMap<>();
+        result.put("items", list);
+        result.put("total", total);
+        result.put("page", request.getPage());
+        result.put("size", request.getSize());
 
 	    return result;
 	}

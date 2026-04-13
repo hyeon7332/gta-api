@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gta.dto.TransportModelCreateRequest;
 import com.gta.dto.TransportModelDto;
+import com.gta.dto.TransportModelSearchRequest;
 import com.gta.dto.TransportModelUpdateRequest;
 import com.gta.service.TransportModelService;
 
@@ -38,12 +38,8 @@ public class TransportModelController {
      * @return 이동수단 모델 목록
      */
 	@GetMapping
-	public Map<String, Object> getList(@RequestParam(required = false) String keyword,
-									   @RequestParam(defaultValue = "1") int page,
-								       @RequestParam(defaultValue = "15") int size,
-								       @RequestParam(required = false) String sort) 
-	{
-		return transportModelService.getList(keyword, page, size, sort);
+	public Map<String, Object> getList(TransportModelSearchRequest request) {
+		return transportModelService.getList(request);
 	}
 	
 	/**

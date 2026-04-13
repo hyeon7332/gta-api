@@ -7,26 +7,24 @@ import org.apache.ibatis.annotations.Param;
 
 import com.gta.dto.TransportModelCreateRequest;
 import com.gta.dto.TransportModelDto;
+import com.gta.dto.TransportModelSearchRequest;
 import com.gta.dto.TransportModelUpdateRequest;
 
 @Mapper
 public interface TransportModelMapper {
-	
-	List<TransportModelDto> selectList(@Param("keyword") String keyword,
-	        						   @Param("offset") int offset,
-	        						   @Param("size") int size,
-	        						   @Param("sort") String sort
-	);
 
-	int selectCount(@Param("keyword") String keyword);
-	
-	int insertTransportModel(TransportModelCreateRequest request);
+    List<TransportModelDto> selectList(@Param("request") TransportModelSearchRequest request,
+                                       @Param("offset") int offset,
+                                       @Param("size") int size);
+
+    int selectCount(@Param("request") TransportModelSearchRequest request);
+
+    int insertTransportModel(TransportModelCreateRequest request);
 
     int updateTransportModel(@Param("modelId") Long modelId,
                              @Param("request") TransportModelUpdateRequest request);
 
     int deleteTransportModel(@Param("modelId") Long modelId);
 
-	List<TransportModelDto> selectOptions();
-
+    List<TransportModelDto> selectOptions();
 }
