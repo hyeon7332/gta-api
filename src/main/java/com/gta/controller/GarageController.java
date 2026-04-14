@@ -2,12 +2,16 @@ package com.gta.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gta.dto.GarageListDto;
+import com.gta.dto.GarageSettingUpdateRequest;
 import com.gta.service.GarageService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,11 +34,12 @@ public class GarageController {
      *
      * @return 차고 목록
      */
-    @GetMapping
-    public List<GarageListDto> getList()
-    {
-        return garageService.getList();
-    }
+	@GetMapping
+	public List<GarageListDto> getList(HttpServletRequest request) {
+	    Long userId = (Long) request.getAttribute("userId");
+
+	    return garageService.getList(userId);
+	}
     
     /**
      * 특정 차고에서 사용 중인 슬롯 번호 목록 조회
@@ -48,5 +53,25 @@ public class GarageController {
     	Long userId = (Long) request.getAttribute("userId");
     	
     	return garageService.getOccupiedSlots(garageId, userId);
+    }
+    
+    /**
+     * 사용자별 차고 설정 저장
+     *
+     * @param garageId 차고 ID
+     * @param request 차고 설정 요청
+     * @param requestHttp 사용자 식별용 요청 객체
+     * @return 저장 결과
+     */
+    @PutMapping("/{garageId}/setting")
+    public ResponseEntity<Void> updateGarageSetting(@PathVariable Long garageId,
+                                                    @RequestBody GarageSettingUpdateRequest request,
+                                                    HttpServletRequest requestHttp)
+    {
+        Long userId = (Long) requestHttp.getAttribute("userId");
+
+        garageService.updateGarageSetting(garageId, userId, request);
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -15,4 +15,7 @@ public class GarageListDto {
     private String name;      
     private Integer capacity; 
     private Integer sortOrder;
+    private String alias;
+    private String description;
+    private String collapsedYn;
 }

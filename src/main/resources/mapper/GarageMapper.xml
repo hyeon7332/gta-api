@@ -9,16 +9,29 @@
     	<result property="name" column="name"/>
     	<result property="capacity" column="capacity"/>
     	<result property="sortOrder" column="sort_order"/>
+    	<result property="alias" column="alias"/>
+		<result property="description" column="description"/>
+		<result property="collapsedYn" column="collapsed_yn"/>
   	</resultMap>
   	
 	<select id="selectGarageList" resultMap="GarageListMap">
-		SELECT
-			garage_id,
-	      	name,
-	      	capacity,
-	      	sort_order
-	    FROM garage
-	    ORDER BY sort_order ASC, garage_id ASC
+	    SELECT
+	        g.garage_id,
+	        g.name,
+	        g.capacity,
+	        g.sort_order,
+	
+	        ugs.alias,
+	        ugs.description,
+	        ugs.collapsed_yn
+	
+	    FROM garage g
+	
+	    LEFT JOIN user_garage_setting ugs
+	      ON ugs.garage_id = g.garage_id
+	     AND ugs.user_id = #{userId}
+	
+	    ORDER BY g.sort_order ASC, g.garage_id ASC
 	</select>
 
 	<select id="selectOccupiedSlotsByGarageId" resultType="int">
@@ -31,4 +44,38 @@
 	      AND ot.user_id = #{userId}
 	    ORDER BY ots.slot_no ASC
 	</select>
+	
+	<select id="existsUserGarageSetting" resultType="int">
+		SELECT COUNT(*)
+		FROM user_garage_setting
+		WHERE garage_id = #{garageId}
+		  AND user_id = #{userId}
+	</select>
+
+	<insert id="insertUserGarageSetting">
+		INSERT INTO user_garage_setting
+		(
+			garage_id,
+			user_id,
+			alias,
+			description,
+			collapsed_yn
+		)
+		VALUES
+		(
+			#{garageId},
+			#{userId},
+			#{req.alias},
+			#{req.description},
+			'N'
+		)
+	</insert>
+
+	<update id="updateUserGarageSetting">
+		UPDATE user_garage_setting
+		SET alias = #{req.alias},
+		    description = #{req.description}
+		WHERE garage_id = #{garageId}
+		  AND user_id = #{userId}
+	</update>
 </mapper>

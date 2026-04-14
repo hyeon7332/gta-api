@@ -19,16 +19,20 @@
 	        tm.upgrade_type,
 	
 	        g.garage_id,
-			CASE
-			    WHEN ot.storage_type = 'PEGASUS' THEN '페가수스'
-			    WHEN ot.storage_type = 'UNASSIGNED' THEN '미배치'
-			    ELSE g.name
-			END AS garage_name,
-			CASE
-			    WHEN ot.storage_type IN ('PEGASUS', 'UNASSIGNED') THEN NULL
-			    ELSE ots.slot_no
-			END AS slot_no,
-			ot.storage_type
+	        ugs.alias,
+	        ugs.description,
+	        ugs.collapsed_yn,
+	
+	        CASE
+	            WHEN ot.storage_type = 'PEGASUS' THEN '페가수스'
+	            WHEN ot.storage_type = 'UNASSIGNED' THEN '미배치'
+	            ELSE g.name
+	        END AS garage_name,
+	        CASE
+	            WHEN ot.storage_type IN ('PEGASUS', 'UNASSIGNED') THEN NULL
+	            ELSE ots.slot_no
+	        END AS slot_no,
+	        ot.storage_type
 	
 	    FROM owned_transport ot
 	    INNER JOIN transport_model tm
@@ -37,6 +41,9 @@
 	        ON ots.owned_id = ot.owned_id
 	    LEFT JOIN garage g
 	        ON g.garage_id = ots.garage_id
+	    LEFT JOIN user_garage_setting ugs
+	        ON ugs.garage_id = g.garage_id
+	       AND ugs.user_id = #{userId}
 	
 	    WHERE ot.user_id = #{userId}
 	
