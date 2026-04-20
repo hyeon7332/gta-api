@@ -27,4 +27,7 @@ public class OwnedTransportCreateRequest {
     
 	/* 보관 상태 */
     private String storageType;
+    
+    /* 비고 */
+    private String remark;
 }

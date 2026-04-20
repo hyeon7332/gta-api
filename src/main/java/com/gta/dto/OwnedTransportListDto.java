@@ -24,4 +24,5 @@ public class OwnedTransportListDto {
     private String alias;
     private String description;
     private String collapsedYn;
+    private String remark;
 }

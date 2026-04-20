@@ -10,6 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OwnedTransportUpdateRequest {
+	private Long ownedId;
+    private Long userId;
     private Long garageId;
 
     @Min(value = 1, message = "slotNo는 1 이상이어야 합니다.")
@@ -17,4 +19,7 @@ public class OwnedTransportUpdateRequest {
     
     /* 보관 상태 */
     private String storageType;
+    
+    /* 비고 */
+    private String remark;
 }

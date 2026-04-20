@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
 import com.gta.dto.OwnedTransportSlotDto;
+import com.gta.dto.OwnedTransportUpdateRequest;
 
 @Mapper
 public interface OwnedTransportMapper {
@@ -60,7 +61,5 @@ public interface OwnedTransportMapper {
 						           @Param("slotNo") Integer slotNo,
 						           @Param("userId") Long userId);
 
-    int updateStorageType(@Param("ownedId") Long ownedId,
-				    	  @Param("userId") Long userId,
-				    	  @Param("storageType") String storageType);
+    int updateStorageType(OwnedTransportUpdateRequest req);
 }

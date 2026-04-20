@@ -32,7 +32,8 @@
 	            WHEN ot.storage_type IN ('PEGASUS', 'UNASSIGNED') THEN NULL
 	            ELSE ots.slot_no
 	        END AS slot_no,
-	        ot.storage_type
+	        ot.storage_type,
+	        ot.remark
 	
 	    FROM owned_transport ot
 	    INNER JOIN transport_model tm
@@ -71,13 +72,15 @@
 	    (
 	        model_id,
 	        user_id,
-	        storage_type
+	        storage_type,
+	        remark
 	    )
 	    VALUES
 	    (
 	        #{modelId},
 	        #{userId},
-	        #{storageType}
+	        #{storageType},
+	        #{remark}
 	    )
     </insert>
 
@@ -211,7 +214,8 @@
 	
 	<update id="updateStorageType">
 	    UPDATE owned_transport
-	    SET storage_type = #{storageType}
+	    SET storage_type = #{storageType},
+	    	remark = #{remark}
 	    WHERE owned_id = #{ownedId}
 	      AND user_id = #{userId}
 	</update>

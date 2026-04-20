@@ -94,7 +94,10 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        }
 	    }
 
-	    ownedTransportMapper.updateStorageType(ownedId, userId, storageType);
+	    request.setOwnedId(ownedId);
+	    request.setUserId(userId);
+
+	    ownedTransportMapper.updateStorageType(request);
 
 	    if (!"GARAGE".equals(storageType)) {
 	        ownedTransportMapper.deleteByOwnedId(ownedId, userId);
