@@ -17,6 +17,7 @@
 	        tm.price,
 	        tm.release_date,
 	        tm.upgrade_type,
+	        tm.upgrade_location,
 	
 	        g.garage_id,
 	        ugs.alias,

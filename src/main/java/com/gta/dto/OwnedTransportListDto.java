@@ -25,4 +25,5 @@ public class OwnedTransportListDto {
     private String description;
     private String collapsedYn;
     private String remark;
+    private String upgradeLocation;
 }
