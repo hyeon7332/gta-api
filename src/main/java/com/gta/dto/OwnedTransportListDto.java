@@ -26,4 +26,10 @@ public class OwnedTransportListDto {
     private String collapsedYn;
     private String remark;
     private String upgradeLocation;
+    private Integer lapTime;
+    private Double topSpeed;
+    private Integer lapRank;
+    private Integer speedRank;
+    private Integer lapCategoryRank;
+    private Integer speedCategoryRank;
 }

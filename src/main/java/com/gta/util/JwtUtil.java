@@ -30,7 +30,17 @@ public class JwtUtil {
 	
 	public String generateToken(Long userId, String role) {
 	    Date now = new Date();
-	    Date expiry = new Date(now.getTime() + 3600000); // 1시간
+	    long expiryMillis;
+	    
+	    if ("ADMIN".equals(role)) {
+	        // 관리자 → 30일
+	        expiryMillis = 1000L * 60 * 60 * 24 * 30;
+	    } else {
+	        // 일반회원 → 3시간
+	        expiryMillis = 1000L * 60 * 60 * 3;
+	    }
+	    
+	    Date expiry = new Date(now.getTime() + expiryMillis);
 
 	    return Jwts.builder()
 	            .setSubject(String.valueOf(userId))

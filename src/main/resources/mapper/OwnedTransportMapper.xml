@@ -19,6 +19,11 @@
 	        tm.upgrade_type,
 	        tm.upgrade_location,
 	
+	        lap_rank.lap_rank,
+	        lap_rank.lap_category_rank,
+	        speed_rank.speed_rank,
+	        speed_rank.speed_category_rank,
+	
 	        g.garage_id,
 	        ugs.alias,
 	        ugs.description,
@@ -39,6 +44,51 @@
 	    FROM owned_transport ot
 	    INNER JOIN transport_model tm
 	        ON tm.model_id = ot.model_id
+	
+	    LEFT JOIN
+	    (
+	        SELECT
+	            ranked_lap.model_id,
+	            ranked_lap.lap_rank,
+	            ranked_lap.lap_category_rank
+	        FROM
+	        (
+	            SELECT
+	                tm_inner.model_id,
+	                DENSE_RANK() OVER (ORDER BY tm_inner.lap_time ASC) AS lap_rank,
+	                DENSE_RANK() OVER (
+	                    PARTITION BY tm_inner.transport_category
+	                    ORDER BY tm_inner.lap_time ASC
+	                ) AS lap_category_rank
+	            FROM transport_model tm_inner
+	            WHERE tm_inner.lap_time IS NOT NULL
+	              AND tm_inner.lap_time > 0
+	        ) ranked_lap
+	    ) lap_rank
+	        ON lap_rank.model_id = tm.model_id
+	
+	    LEFT JOIN
+	    (
+	        SELECT
+	            ranked_speed.model_id,
+	            ranked_speed.speed_rank,
+	            ranked_speed.speed_category_rank
+	        FROM
+	        (
+	            SELECT
+	                tm_inner.model_id,
+	                DENSE_RANK() OVER (ORDER BY tm_inner.top_speed DESC) AS speed_rank,
+	                DENSE_RANK() OVER (
+	                    PARTITION BY tm_inner.transport_category
+	                    ORDER BY tm_inner.top_speed DESC
+	                ) AS speed_category_rank
+	            FROM transport_model tm_inner
+	            WHERE tm_inner.top_speed IS NOT NULL
+	              AND tm_inner.top_speed > 0
+	        ) ranked_speed
+	    ) speed_rank
+	        ON speed_rank.model_id = tm.model_id
+	
 	    LEFT JOIN owned_transport_storage ots
 	        ON ots.owned_id = ot.owned_id
 	    LEFT JOIN garage g
