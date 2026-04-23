@@ -32,4 +32,8 @@ public class OwnedTransportListDto {
     private Integer speedRank;
     private Integer lapCategoryRank;
     private Integer speedCategoryRank;
+    private Integer lapTotalCount;
+    private Integer lapCategoryTotalCount;
+    private Integer speedTotalCount;
+    private Integer speedCategoryTotalCount;
 }

@@ -21,14 +21,18 @@
 	
 	        lap_rank.lap_rank,
 	        lap_rank.lap_category_rank,
+	        lap_rank.lap_total_count,
+	        lap_rank.lap_category_total_count,
+	
 	        speed_rank.speed_rank,
 	        speed_rank.speed_category_rank,
+	        speed_rank.speed_total_count,
+	        speed_rank.speed_category_total_count,
 	
 	        g.garage_id,
 	        ugs.alias,
 	        ugs.description,
 	        ugs.collapsed_yn,
-	
 	        CASE
 	            WHEN ot.storage_type = 'PEGASUS' THEN '페가수스'
 	            WHEN ot.storage_type = 'UNASSIGNED' THEN '미배치'
@@ -50,12 +54,16 @@
 	        SELECT
 	            ranked_lap.model_id,
 	            ranked_lap.lap_rank,
-	            ranked_lap.lap_category_rank
+	            ranked_lap.lap_category_rank,
+	            ranked_lap.lap_total_count,
+	            ranked_lap.lap_category_total_count
 	        FROM
 	        (
 	            SELECT
 	                tm_inner.model_id,
 	                DENSE_RANK() OVER (ORDER BY tm_inner.lap_time ASC) AS lap_rank,
+	                COUNT(*) OVER () AS lap_total_count,
+	                COUNT(*) OVER (PARTITION BY tm_inner.transport_category) AS lap_category_total_count,
 	                DENSE_RANK() OVER (
 	                    PARTITION BY tm_inner.transport_category
 	                    ORDER BY tm_inner.lap_time ASC
@@ -72,12 +80,16 @@
 	        SELECT
 	            ranked_speed.model_id,
 	            ranked_speed.speed_rank,
-	            ranked_speed.speed_category_rank
+	            ranked_speed.speed_category_rank,
+	            ranked_speed.speed_total_count,
+	            ranked_speed.speed_category_total_count
 	        FROM
 	        (
 	            SELECT
 	                tm_inner.model_id,
 	                DENSE_RANK() OVER (ORDER BY tm_inner.top_speed DESC) AS speed_rank,
+	                COUNT(*) OVER () AS speed_total_count,
+	                COUNT(*) OVER (PARTITION BY tm_inner.transport_category) AS speed_category_total_count,
 	                DENSE_RANK() OVER (
 	                    PARTITION BY tm_inner.transport_category
 	                    ORDER BY tm_inner.top_speed DESC
