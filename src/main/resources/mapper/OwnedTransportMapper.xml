@@ -18,6 +18,11 @@
 	        tm.release_date,
 	        tm.upgrade_type,
 	        tm.upgrade_location,
+	        tm.source,
+	        tm.weight,
+			tm.drive_train,
+			tm.seats,
+			tm.features,
 	
 	        lap_rank.lap_rank,
 	        lap_rank.lap_category_rank,

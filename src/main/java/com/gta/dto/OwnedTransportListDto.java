@@ -36,4 +36,9 @@ public class OwnedTransportListDto {
     private Integer lapCategoryTotalCount;
     private Integer speedTotalCount;
     private Integer speedCategoryTotalCount;
+    private String source;
+    private Double weight;
+    private String driveTrain;
+    private Integer seats;
+    private String features;
 }
