@@ -50,6 +50,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()	
+            	.requestMatchers("/uploads/**").permitAll()
             	.requestMatchers("/api/auth/login", "/api/auth/signup").permitAll()
             	.requestMatchers("/api/auth/approve", "/api/auth/pending-users").hasRole("ADMIN")
                 .anyRequest().authenticated()

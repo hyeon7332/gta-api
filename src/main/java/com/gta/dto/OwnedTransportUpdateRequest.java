@@ -22,4 +22,7 @@ public class OwnedTransportUpdateRequest {
     
     /* 비고 */
     private String remark;
+    
+    /* 이미지 URL */
+    private String imageUrl;
 }

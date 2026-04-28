@@ -48,7 +48,8 @@
 	            ELSE ots.slot_no
 	        END AS slot_no,
 	        ot.storage_type,
-	        ot.remark
+	        ot.remark,
+	        ot.image_url
 	
 	    FROM owned_transport ot
 	    INNER JOIN transport_model tm
@@ -141,14 +142,16 @@
 	        model_id,
 	        user_id,
 	        storage_type,
-	        remark
+	        remark,
+	        image_url
 	    )
 	    VALUES
 	    (
 	        #{modelId},
 	        #{userId},
 	        #{storageType},
-	        #{remark}
+	        #{remark},
+	        #{imageUrl}
 	    )
     </insert>
 
@@ -283,8 +286,16 @@
 	<update id="updateStorageType">
 	    UPDATE owned_transport
 	    SET storage_type = #{storageType},
-	    	remark = #{remark}
+	    	remark = #{remark},
+	    	image_url = #{imageUrl}
 	    WHERE owned_id = #{ownedId}
 	      AND user_id = #{userId}
 	</update>
+	
+	<select id="selectImageUrl" resultType="string">
+	    SELECT image_url
+	    FROM owned_transport
+	    WHERE owned_id = #{ownedId}
+	      AND user_id = #{userId}
+	</select>
 </mapper>  

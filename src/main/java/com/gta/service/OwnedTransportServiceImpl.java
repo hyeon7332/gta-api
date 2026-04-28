@@ -2,6 +2,7 @@ package com.gta.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OwnedTransportServiceImpl implements OwnedTransportService {
 	private final OwnedTransportMapper ownedTransportMapper;
+	
+	@Value("${upload.owned-transport.path}")
+	private String uploadPath;
 	
 	@Override
 	public List<OwnedTransportListDto> getList(Long userId)
@@ -77,6 +81,9 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	@Override
 	@Transactional
 	public void update(Long userId, Long ownedId, OwnedTransportUpdateRequest request) {
+		// 기존 이미지 URL 조회
+		String oldImageUrl = ownedTransportMapper.selectImageUrl(ownedId, userId);
+		
 	    String storageType = request.getStorageType();
 
 	    if (storageType == null || storageType.trim().isEmpty()) {
@@ -96,8 +103,30 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 
 	    request.setOwnedId(ownedId);
 	    request.setUserId(userId);
-
+	    
 	    ownedTransportMapper.updateStorageType(request);
+	    
+	    // 이미지 변경/삭제 시 기존 파일 삭제
+	    String newImageUrl = request.getImageUrl();
+	    
+	    if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
+
+	        boolean isRemoved = newImageUrl == null || newImageUrl.isEmpty();
+	        boolean isChanged = newImageUrl != null && !newImageUrl.equals(oldImageUrl);
+
+	        if (isRemoved || isChanged) {
+	            try {
+	                String fileName = oldImageUrl.substring(oldImageUrl.lastIndexOf("/") + 1);
+	                java.io.File file = new java.io.File(uploadPath, fileName);
+
+	                if (file.exists()) {
+	                    file.delete();
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
 
 	    if (!"GARAGE".equals(storageType)) {
 	        ownedTransportMapper.deleteByOwnedId(ownedId, userId);
@@ -148,6 +177,22 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	@Override
 	@Transactional
 	public void delete(Long userId, Long ownedId) {
+		String imageUrl = ownedTransportMapper.selectImageUrl(ownedId, userId);
+		
+		if (imageUrl != null && !imageUrl.isEmpty()) {
+		    try {
+		        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+		        java.io.File file = new java.io.File(uploadPath, fileName);
+
+		        if (file.exists()) {
+		            file.delete();
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		}
+		
 		int deleted = ownedTransportMapper.deleteById(ownedId, userId);
 		
 		if (deleted == 0) {

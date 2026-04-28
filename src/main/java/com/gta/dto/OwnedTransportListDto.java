@@ -41,4 +41,5 @@ public class OwnedTransportListDto {
     private String driveTrain;
     private Integer seats;
     private String features;
+    private String imageUrl;
 }

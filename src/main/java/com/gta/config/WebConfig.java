@@ -5,12 +5,19 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 	@Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
+	
+	@Value("${upload.owned-transport.path}")
+	private String uploadPath;
+
+	@Value("${upload.owned-transport.url-prefix}")
+	private String urlPrefix;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -23,5 +30,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(origins)
                 .allowedMethods("*")
                 .allowedHeaders("*");
+    }
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler(urlPrefix + "/**")
+                .addResourceLocations("file:" + uploadPath + "/");
     }
 }

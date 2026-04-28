@@ -11,3 +11,8 @@ spring:
 app:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+upload:
+  owned-transport:
+    path: /home/ubuntu/gta-upload/owned-transport
+    url-prefix: /uploads/owned-transport

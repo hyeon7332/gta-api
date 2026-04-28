@@ -62,4 +62,7 @@ public interface OwnedTransportMapper {
 						           @Param("userId") Long userId);
 
     int updateStorageType(OwnedTransportUpdateRequest req);
+
+    String selectImageUrl(@Param("ownedId") Long ownedId,
+            			  @Param("userId") Long userId);
 }
