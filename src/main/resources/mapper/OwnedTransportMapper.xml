@@ -285,9 +285,14 @@
 	
 	<update id="updateStorageType">
 	    UPDATE owned_transport
-	    SET storage_type = #{storageType},
-	    	remark = #{remark},
-	    	image_url = #{imageUrl}
+	    <set>
+	        storage_type = #{storageType},
+	        remark = #{remark}
+	
+	        <if test="imageUrl != null">
+	            ,image_url = #{imageUrl}
+	        </if>
+	    </set>
 	    WHERE owned_id = #{ownedId}
 	      AND user_id = #{userId}
 	</update>
