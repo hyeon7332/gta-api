@@ -109,10 +109,9 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	    // 이미지 변경/삭제 시 기존 파일 삭제
 	    String newImageUrl = request.getImageUrl();
 	    
-	    if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
-
-	        boolean isRemoved = newImageUrl == null || newImageUrl.isEmpty();
-	        boolean isChanged = newImageUrl != null && !newImageUrl.equals(oldImageUrl);
+	    if (newImageUrl != null && oldImageUrl != null && !oldImageUrl.isEmpty()) {
+	    	boolean isRemoved = newImageUrl.isEmpty();
+	        boolean isChanged = !newImageUrl.equals(oldImageUrl);
 
 	        if (isRemoved || isChanged) {
 	            try {

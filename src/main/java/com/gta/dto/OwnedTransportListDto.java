@@ -42,4 +42,8 @@ public class OwnedTransportListDto {
     private Integer seats;
     private String features;
     private String imageUrl;
+    private String primaryColor;
+    private String secondaryColor;
+    private String trimColor;
+    private String accentColor;
 }
