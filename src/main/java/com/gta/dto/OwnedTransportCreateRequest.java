@@ -45,4 +45,10 @@ public class OwnedTransportCreateRequest {
 
     /* 액센트 색상 */
     private String accentColor;
+    
+    /* 펄 광택 */
+    private String pearlescentColor;
+
+    /* 상징 */
+    private String decal;
 }

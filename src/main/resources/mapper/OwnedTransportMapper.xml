@@ -51,9 +51,11 @@
 	        ot.remark,
 	        ot.image_url,
 	        ot.primary_color,
+	        ot.pearlescent_color,
 			ot.secondary_color,
 			ot.trim_color,
-			ot.accent_color
+			ot.accent_color,
+			ot.decal
 	
 	    FROM owned_transport ot
 	    INNER JOIN transport_model tm
@@ -149,9 +151,11 @@
 	        remark,
 	        image_url,
 	        primary_color,
+	        pearlescent_color,
 			secondary_color,
 			trim_color,
-			accent_color
+			accent_color,
+			decal
 	    )
 	    VALUES
 	    (
@@ -161,9 +165,11 @@
 	        #{remark},
 	        #{imageUrl},
 	        #{primaryColor},
+	        #{pearlescentColor},
 			#{secondaryColor},
 			#{trimColor},
-			#{accentColor}
+			#{accentColor},
+			#{decal}
 	    )
     </insert>
 
@@ -309,6 +315,10 @@
 			    ,primary_color = #{primaryColor}
 			</if>
 			
+			<if test="pearlescentColor != null">
+			    ,pearlescent_color = #{pearlescentColor}
+			</if>
+			
 			<if test="secondaryColor != null">
 			    ,secondary_color = #{secondaryColor}
 			</if>
@@ -319,6 +329,10 @@
 			
 			<if test="accentColor != null">
 			    ,accent_color = #{accentColor}
+			</if>
+			
+			<if test="decal != null">
+			    ,decal = #{decal}
 			</if>
 	    </set>
 	    WHERE owned_id = #{ownedId}

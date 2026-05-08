@@ -46,4 +46,6 @@ public class OwnedTransportListDto {
     private String secondaryColor;
     private String trimColor;
     private String accentColor;
+    private String pearlescentColor;
+    private String decal;
 }
