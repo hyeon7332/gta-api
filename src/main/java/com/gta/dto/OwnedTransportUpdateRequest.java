@@ -25,21 +25,6 @@ public class OwnedTransportUpdateRequest {
     
     /* 이미지 URL */
     private String imageUrl;
-    
-    /* 1차 색상 */
-    private String primaryColor;
-
-    /* 2차 색상 */
-    private String secondaryColor;
-
-    /* 트림 색상 */
-    private String trimColor;
-
-    /* 액센트 색상 */
-    private String accentColor;
-    
-    /* 펄 광택 */
-    private String pearlescentColor;
 
     /* 상징 */
     private String decal;

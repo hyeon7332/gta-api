@@ -50,11 +50,6 @@
 	        ot.storage_type,
 	        ot.remark,
 	        ot.image_url,
-	        ot.primary_color,
-	        ot.pearlescent_color,
-			ot.secondary_color,
-			ot.trim_color,
-			ot.accent_color,
 			ot.decal
 	
 	    FROM owned_transport ot
@@ -150,11 +145,6 @@
 	        storage_type,
 	        remark,
 	        image_url,
-	        primary_color,
-	        pearlescent_color,
-			secondary_color,
-			trim_color,
-			accent_color,
 			decal
 	    )
 	    VALUES
@@ -164,11 +154,6 @@
 	        #{storageType},
 	        #{remark},
 	        #{imageUrl},
-	        #{primaryColor},
-	        #{pearlescentColor},
-			#{secondaryColor},
-			#{trimColor},
-			#{accentColor},
 			#{decal}
 	    )
     </insert>
@@ -310,26 +295,6 @@
 	        <if test="imageUrl != null">
 	            ,image_url = #{imageUrl}
 	        </if>
-	        
-	        <if test="primaryColor != null">
-			    ,primary_color = #{primaryColor}
-			</if>
-			
-			<if test="pearlescentColor != null">
-			    ,pearlescent_color = #{pearlescentColor}
-			</if>
-			
-			<if test="secondaryColor != null">
-			    ,secondary_color = #{secondaryColor}
-			</if>
-			
-			<if test="trimColor != null">
-			    ,trim_color = #{trimColor}
-			</if>
-			
-			<if test="accentColor != null">
-			    ,accent_color = #{accentColor}
-			</if>
 			
 			<if test="decal != null">
 			    ,decal = #{decal}
