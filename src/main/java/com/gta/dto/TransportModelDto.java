@@ -8,7 +8,6 @@ public class TransportModelDto {
     private String manufacturer;
     private String name;
     private String transportCategory;
-    private String upgradeType;
     private String upgradeLocation;
     private Integer lapTime;
     private Double topSpeed;

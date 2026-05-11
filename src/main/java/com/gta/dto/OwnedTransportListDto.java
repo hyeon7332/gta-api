@@ -19,7 +19,6 @@ public class OwnedTransportListDto {
     private Long garageId;           
     private String garageName;       
     private Integer slotNo;     
-    private String upgradeType;
     private String storageType;
     private String alias;
     private String description;

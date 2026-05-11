@@ -25,11 +25,6 @@
 	            AND tm.transport_category = #{request.category}
 	        </if>
 	
-	        <!-- 개조유형 -->
-	        <if test="request.upgradeType != null and request.upgradeType != ''">
-	            AND tm.upgrade_type = #{request.upgradeType}
-	        </if>
-	
 	        <!-- 획득처 -->
 	        <if test="request.source != null and request.source != ''">
 	            AND tm.source = #{request.source}
@@ -58,7 +53,6 @@
 	        tm.manufacturer,
 	        tm.name,
 	        tm.transport_category,
-	        tm.upgrade_type,
 	        tm.upgrade_location,
 	        tm.lap_time,
 	        tm.top_speed,
@@ -152,7 +146,6 @@
               manufacturer
             , name
             , transport_category
-            , upgrade_type
             , upgrade_location
             , lap_time
             , top_speed
@@ -169,7 +162,6 @@
               #{manufacturer}
             , #{name}
             , #{transportCategory}
-            , #{upgradeType}
             , #{upgradeLocation}
             , #{lapTime}
             , #{topSpeed}
@@ -191,7 +183,6 @@
               manufacturer = #{request.manufacturer}
             , name = #{request.name}
             , transport_category = #{request.transportCategory}
-            , upgrade_type = #{request.upgradeType}
             , upgrade_location = #{request.upgradeLocation}
             , lap_time = #{request.lapTime}
             , top_speed = #{request.topSpeed}
@@ -220,7 +211,6 @@
 	        manufacturer,
 	        name,
 	        transport_category,
-	        upgrade_type,
 	        upgrade_location,
 	        lap_time,
 	        top_speed,

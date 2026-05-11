@@ -16,7 +16,6 @@
 	        tm.top_speed,
 	        tm.price,
 	        tm.release_date,
-	        tm.upgrade_type,
 	        tm.upgrade_location,
 	        tm.source,
 	        tm.weight,

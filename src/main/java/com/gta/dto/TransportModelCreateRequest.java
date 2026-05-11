@@ -26,9 +26,6 @@ public class TransportModelCreateRequest {
     @NotBlank(message = "transportCategory는 필수입니다.")
     private String transportCategory;
 
-    /** 개조 유형 */
-    private String upgradeType;
-
     /** 개조 위치 */
     private String upgradeLocation;
 
