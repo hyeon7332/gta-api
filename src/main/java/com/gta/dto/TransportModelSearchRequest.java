@@ -9,8 +9,8 @@ public class TransportModelSearchRequest {
 	private String keyword;
     private String manufacturer;
     private String category;
-    private String source;
     
+    private List<String> sources;
     private List<String> upgradeLocations;
     private List<String> features;
 

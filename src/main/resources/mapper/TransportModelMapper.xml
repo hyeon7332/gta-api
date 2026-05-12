@@ -26,9 +26,11 @@
 	        </if>
 	
 	        <!-- 획득처 -->
-	        <if test="request.source != null and request.source != ''">
-	            AND tm.source = #{request.source}
-	        </if>
+	        <if test="request.sources != null and request.sources.size() > 0">
+			    <foreach collection="request.sources" item="source">
+			        AND tm.source LIKE CONCAT('%', #{source}, '%')
+			    </foreach>
+			</if>
 	
 	        <!-- 개조위치 -->
 	        <if test="request.upgradeLocations != null and request.upgradeLocations.size() > 0">
