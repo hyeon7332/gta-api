@@ -65,4 +65,10 @@ public interface OwnedTransportMapper {
 
     String selectImageUrl(@Param("ownedId") Long ownedId,
             			  @Param("userId") Long userId);
+    
+    /* 모델 ID 기준 features 조회 */
+    String selectFeaturesByModelId(@Param("modelId") Long modelId);
+
+    /* 보유 이동수단 ID 기준 features 조회 */
+    String selectFeaturesByOwnedId(@Param("ownedId") Long ownedId);
 }

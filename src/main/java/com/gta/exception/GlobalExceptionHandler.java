@@ -13,31 +13,46 @@ import com.gta.dto.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
-    	ErrorResponse response = new ErrorResponse();
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e)
+    {
+        ErrorResponse response = new ErrorResponse();
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setMessage(e.getMessage());
-    	
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
-    
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e) {
+        response.setExpose(true);
 
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e)
+    {
+        ErrorResponse response = new ErrorResponse();
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setMessage("요청 처리 중 오류가 발생했습니다.");
+        response.setExpose(false);
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e)
+    {
         ErrorResponse response = new ErrorResponse();
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setMessage(e.getMessage());
+        response.setExpose(false);
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException e) {
-
+    public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException e)
+    {
         ErrorResponse response = new ErrorResponse();
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setMessage(e.getMessage());
+        response.setExpose(false);
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }

@@ -1,5 +1,6 @@
 package com.gta.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import com.gta.dto.OwnedTransportListDto;
 import com.gta.dto.OwnedTransportSlotDto;
 import com.gta.dto.OwnedTransportUpdateRequest;
 import com.gta.dto.SwapOwnedTransportRequest;
+import com.gta.exception.BusinessException;
 import com.gta.mapper.OwnedTransportMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -25,13 +27,25 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	@Value("${upload.owned-transport.path}")
 	private String uploadPath;
 	
+	/**
+	 * 보유 이동수단 목록 조회
+	 * @param userId
+	 * @return
+	 */
 	@Override
 	public List<OwnedTransportListDto> getList(Long userId)
 	{
 	    return ownedTransportMapper.selectList(userId);
 	}
 
+	/**
+	 * 보유 이동수단 등록
+	 * @param userId
+	 * @param req
+	 * @return
+	 */
 	@Override
+	@Transactional
 	public int create(Long userId, OwnedTransportCreateRequest req) {
 		// 기본값 처리
 	    if (req.getOwnStatus() == null || req.getOwnStatus().trim().isEmpty()) {
@@ -47,16 +61,8 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        storageType = req.getStorageType();
 	    }
 	    
-	    // 차고/슬롯 검증
-	    if ("GARAGE".equals(storageType)) {
-	        if (req.getGarageId() == null || req.getSlotNo() == null) {
-	            throw new IllegalArgumentException("차고 보관은 차고와 슬롯이 모두 필요합니다.");
-	        }
-	    } else {
-	        if (req.getGarageId() != null || req.getSlotNo() != null) {
-	            throw new IllegalArgumentException("차고 보관이 아닌 경우 차고와 슬롯은 저장할 수 없습니다.");
-	        }
-	    }
+	    // 보관 타입별 차고/슬롯 검증
+	    validateStorageForCreate(req);
 		
 	    // owned_transport insert (ownedId 생성)
 	    int inserted = ownedTransportMapper.insertOwnedTransport(req);
@@ -70,14 +76,26 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        throw new IllegalStateException("ownedId 생성값을 받지 못했습니다. Mapper XML의 키 설정을 확인하세요.");
 	    }
 	    
-	    // GARAGE 인 경우만 storage insert
-	    if ("GARAGE".equals(req.getStorageType())) {
-	        ownedTransportMapper.insertOwnedTransportStorage(req);
+	    // GARAGE / HANGAR 인 경우 보관 위치 저장
+	    if (isLocationStorage(req.getStorageType())) {
+	        int storageInserted = ownedTransportMapper.insertOwnedTransportStorage(req);
+
+	        if (storageInserted == 0) {
+	            throw new IllegalStateException(
+	                "보관 위치 등록에 실패했습니다. ownedId=" + req.getOwnedId()
+	            );
+	        }
 	    }
 
 	    return inserted;
 	}
 
+	/**
+	 * 보유 이동수단 수정
+	 * @param userId
+	 * @param ownedId
+	 * @param request
+	 */
 	@Override
 	@Transactional
 	public void update(Long userId, Long ownedId, OwnedTransportUpdateRequest request) {
@@ -91,18 +109,11 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        request.setStorageType(storageType);
 	    }
 
-	    if ("GARAGE".equals(storageType)) {
-	        if (request.getGarageId() == null || request.getSlotNo() == null) {
-	            throw new IllegalArgumentException("차고 보관은 차고와 슬롯이 모두 필요합니다.");
-	        }
-	    } else {
-	        if (request.getGarageId() != null || request.getSlotNo() != null) {
-	            throw new IllegalArgumentException("차고 보관이 아닌 경우 차고와 슬롯은 저장할 수 없습니다.");
-	        }
-	    }
-
 	    request.setOwnedId(ownedId);
 	    request.setUserId(userId);
+	    
+	    // 보관 타입별 차고/슬롯 검증
+	    validateStorageForUpdate(request);
 	    
 	    ownedTransportMapper.updateStorageType(request);
 	    
@@ -125,6 +136,23 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	                e.printStackTrace();
 	            }
 	        }
+	    }
+
+	    if ("HANGAR".equals(storageType)) {
+	        ownedTransportMapper.deleteByOwnedId(ownedId, userId);
+
+	        int inserted = ownedTransportMapper.insertLocation(
+	            ownedId,
+	            request.getGarageId(),
+	            null,
+	            userId
+	        );
+
+	        if (inserted == 0) {
+	            throw new IllegalStateException("격납고 보관 위치 등록에 실패했습니다. ownedId=" + ownedId);
+	        }
+
+	        return;
 	    }
 
 	    if (!"GARAGE".equals(storageType)) {
@@ -173,6 +201,11 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	    }
 	}
 
+	/**
+	 * 보유 이동수단 삭제
+	 * @param userId
+	 * @param ownedId
+	 */
 	@Override
 	@Transactional
 	public void delete(Long userId, Long ownedId) {
@@ -199,29 +232,34 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 		}
 	}
 
+	/**
+	 * 보유 이동수단 슬롯 위치 교체
+	 * @param userId
+	 * @param request
+	 */
 	@Override
 	@Transactional
 	public void swapOwnedTransport(Long userId, SwapOwnedTransportRequest request) {
 		if (request == null) {
-	        throw new IllegalArgumentException("요청값이 없습니다.");
+	        throw new BusinessException("요청값이 없습니다.");
 	    }
 		
 		Long sourceOwnedId = request.getSourceOwnedId();
 		Long targetOwnedId = request.getTargetOwnedId();
 		
 		if (sourceOwnedId == null || targetOwnedId == null) {
-	        throw new IllegalArgumentException("교체 대상 차량 ID가 없습니다.");
+	        throw new BusinessException("교체 대상 차량 ID가 없습니다.");
 	    }
 
 	    if (sourceOwnedId.equals(targetOwnedId)) {
-	        throw new IllegalArgumentException("같은 차량끼리는 교체할 수 없습니다.");
+	        throw new BusinessException("같은 차량끼리는 교체할 수 없습니다.");
 	    }
 	    
 	    OwnedTransportSlotDto source = ownedTransportMapper.selectStorageByOwnedId(sourceOwnedId, userId);
 	    OwnedTransportSlotDto target = ownedTransportMapper.selectStorageByOwnedId(targetOwnedId, userId);
 	    
 	    if (source == null || target == null) {
-	        throw new IllegalArgumentException("교체 대상 차량 정보를 찾을 수 없습니다.");
+	        throw new BusinessException("교체 대상 차량 정보를 찾을 수 없습니다.");
 	    }
 	    
 	    ownedTransportMapper.updateStorageSlotByOwnedId(
@@ -244,5 +282,132 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
     	    target.getSlotNo(),
     	    userId
     	);
+	}
+
+	/**
+	 * 등록 요청 보관 타입 검증
+	 */
+	private void validateStorageForCreate(OwnedTransportCreateRequest req)
+	{
+	    String storageType = req.getStorageType();
+
+	    if ("GARAGE".equals(storageType)) {
+	        if (req.getGarageId() == null || req.getSlotNo() == null) {
+	            throw new BusinessException("차고 보관은 차고와 슬롯이 모두 필요합니다.");
+	        }
+
+	        return;
+	    }
+
+	    if ("HANGAR".equals(storageType)) {
+	        if (req.getGarageId() == null) {
+	            throw new BusinessException("격납고 보관은 격납고 선택이 필요합니다.");
+	        }
+
+	        req.setSlotNo(null);
+	        validateHangarAvailableTransport(req.getModelId());
+	        return;
+	    }
+
+	    if (req.getGarageId() != null || req.getSlotNo() != null) {
+	        throw new BusinessException("차고/격납고 보관이 아닌 경우 차고와 슬롯은 저장할 수 없습니다.");
+	    }
+	}
+
+	/**
+	 * 수정 요청 보관 타입 검증
+	 */
+	private void validateStorageForUpdate(OwnedTransportUpdateRequest request)
+	{
+	    String storageType = request.getStorageType();
+
+	    if ("GARAGE".equals(storageType)) {
+	        if (request.getGarageId() == null || request.getSlotNo() == null) {
+	            throw new BusinessException("차고 보관은 차고와 슬롯이 모두 필요합니다.");
+	        }
+
+	        return;
+	    }
+
+	    if ("HANGAR".equals(storageType)) {
+	        if (request.getGarageId() == null) {
+	            throw new BusinessException("격납고 보관은 격납고 선택이 필요합니다.");
+	        }
+
+	        request.setSlotNo(null);
+
+	        validateHangarAvailableTransportByOwnedId(request.getOwnedId());
+
+	        return;
+	    }
+
+	    if (request.getGarageId() != null || request.getSlotNo() != null) {
+	        throw new BusinessException("차고/격납고 보관이 아닌 경우 차고와 슬롯은 저장할 수 없습니다.");
+	    }
+	}
+	
+	/**
+	 * 차고/격납고 보관 타입 여부
+	 * @param storageType
+	 * @return
+	 */
+	private boolean isLocationStorage(String storageType)
+	{
+	    return "GARAGE".equals(storageType) || "HANGAR".equals(storageType);
+	}
+	
+	/**
+	 * modelId 기준 격납고 보관 가능 이동수단 검증
+	 * @param modelId
+	 */
+	private void validateHangarAvailableTransport(Long modelId)
+	{
+	    if (modelId == null) {
+	        throw new BusinessException("이동수단 모델 ID가 없습니다.");
+	    }
+
+	    String features = ownedTransportMapper.selectFeaturesByModelId(modelId);
+
+	    if (!hasHangarFeature(features)) {
+	        throw new BusinessException("격납고에는 격납고 보관 가능 이동수단만 등록할 수 있습니다.");
+	    }
+	}
+
+	/**
+	 * ownedId 기준 격납고 보관 가능 이동수단 검증
+	 * @param ownedId
+	 */
+	private void validateHangarAvailableTransportByOwnedId(Long ownedId)
+	{
+	    if (ownedId == null) {
+	        throw new BusinessException("보유 이동수단 ID가 없습니다.");
+	    }
+
+	    String features = ownedTransportMapper.selectFeaturesByOwnedId(ownedId);
+
+	    if (!hasHangarFeature(features)) {
+	        throw new BusinessException("격납고에는 격납고 보관 가능 이동수단만 등록할 수 있습니다.");
+	    }
+	}
+
+	/**
+	 * features 내 격납고 보관 가능 코드 존재 여부
+	 * @param features
+	 * @return
+	 */
+	private boolean hasHangarFeature(String features)
+	{
+	    if (features == null || features.trim().isEmpty()) {
+	        return false;
+	    }
+
+	    return Arrays.stream(features.split(","))
+	        .map(String::trim)
+	        .anyMatch((feature) -> {
+	            return "HGS".equals(feature)
+	                || "HGM".equals(feature)
+	                || "HGL".equals(feature)
+	                || "HGX".equals(feature);
+	        });
 	}
 }

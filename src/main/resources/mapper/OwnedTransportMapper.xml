@@ -309,4 +309,20 @@
 	    WHERE owned_id = #{ownedId}
 	      AND user_id = #{userId}
 	</select>
+	
+	<select id="selectFeaturesByModelId" resultType="string">
+	    SELECT
+	        features
+	    FROM transport_model
+	    WHERE model_id = #{modelId}
+	</select>
+	
+	<select id="selectFeaturesByOwnedId" resultType="string">
+	    SELECT
+	        tm.features
+	    FROM owned_transport ot
+	    INNER JOIN transport_model tm
+	        ON ot.model_id = tm.model_id
+	    WHERE ot.owned_id = #{ownedId}
+	</select>
 </mapper>  
