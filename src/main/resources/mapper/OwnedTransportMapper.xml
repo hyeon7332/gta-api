@@ -38,12 +38,21 @@
 	        ugs.description,
 	        ugs.collapsed_yn,
 	        CASE
-	            WHEN ot.storage_type = 'PEGASUS' THEN '페가수스'
-	            WHEN ot.storage_type = 'UNASSIGNED' THEN '미배치'
-	            ELSE g.name
-	        END AS garage_name,
+			    WHEN ot.storage_type = 'PEGASUS' THEN '페가수스'
+			    WHEN ot.storage_type = 'UNASSIGNED' THEN '미배치'
+			    WHEN ot.storage_type = 'HANGAR' THEN '격납고 격납층'
+			    WHEN ot.storage_type = 'HANGAR_STORAGE' THEN '격납고 저장소'
+			    WHEN ot.storage_type = 'HANGAR_VINEWOOD' THEN '격납고 바인우드 클럽 보관소'
+			    ELSE g.name
+			END AS garage_name,
 	        CASE
-	            WHEN ot.storage_type IN ('PEGASUS', 'UNASSIGNED') THEN NULL
+	            WHEN ot.storage_type IN (
+				    'PEGASUS',
+				    'UNASSIGNED',
+				    'HANGAR',
+				    'HANGAR_STORAGE',
+				    'HANGAR_VINEWOOD'
+				) THEN NULL
 	            ELSE ots.slot_no
 	        END AS slot_no,
 	        ot.storage_type,
@@ -120,6 +129,10 @@
 	    ORDER BY
 	        g.sort_order IS NULL,
 	        g.sort_order ASC,
+	        CASE
+			    WHEN ot.storage_type = 'HANGAR'
+			    THEN COALESCE(ot.hangar_sort_order, 999999)
+			END ASC,
 	        ots.slot_no IS NULL,
 	        ots.slot_no ASC,
 	        ot.owned_id DESC
@@ -325,4 +338,20 @@
 	        ON ot.model_id = tm.model_id
 	    WHERE ot.owned_id = #{ownedId}
 	</select>
+	
+	<select id="countByStorageType" resultType="int">
+	    SELECT COUNT(*)
+	    FROM owned_transport
+	    WHERE user_id = #{userId}
+	      AND storage_type = #{storageType}
+	</select>
+	
+	<!-- 격납층 정렬 순서 수정 -->
+	<update id="updateHangarOrder">
+	    UPDATE owned_transport
+	    SET hangar_sort_order = #{request.hangarSortOrder}
+	    WHERE owned_id = #{request.ownedId}
+	      AND user_id = #{userId}
+	      AND storage_type = 'HANGAR'
+	</update>
 </mapper>  

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.gta.dto.HangarOrderUpdateRequest;
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
 import com.gta.dto.OwnedTransportSlotDto;
@@ -26,6 +27,14 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	
 	@Value("${upload.owned-transport.path}")
 	private String uploadPath;
+	
+	private static final String STORAGE_TYPE_GARAGE = "GARAGE";
+	private static final String STORAGE_TYPE_HANGAR = "HANGAR";
+	private static final String STORAGE_TYPE_HANGAR_STORAGE = "HANGAR_STORAGE";
+	private static final String STORAGE_TYPE_HANGAR_VINEWOOD = "HANGAR_VINEWOOD";
+
+	private static final int HANGAR_STORAGE_LIMIT = 20;
+	private static final int HANGAR_VINEWOOD_LIMIT = 10;
 	
 	/**
 	 * 보유 이동수단 목록 조회
@@ -76,7 +85,7 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        throw new IllegalStateException("ownedId 생성값을 받지 못했습니다. Mapper XML의 키 설정을 확인하세요.");
 	    }
 	    
-	    // GARAGE / HANGAR 인 경우 보관 위치 저장
+	    // GARAGE 인 경우만 슬롯 위치 저장
 	    if (isLocationStorage(req.getStorageType())) {
 	        int storageInserted = ownedTransportMapper.insertOwnedTransportStorage(req);
 
@@ -136,23 +145,6 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	                e.printStackTrace();
 	            }
 	        }
-	    }
-
-	    if ("HANGAR".equals(storageType)) {
-	        ownedTransportMapper.deleteByOwnedId(ownedId, userId);
-
-	        int inserted = ownedTransportMapper.insertLocation(
-	            ownedId,
-	            request.getGarageId(),
-	            null,
-	            userId
-	        );
-
-	        if (inserted == 0) {
-	            throw new IllegalStateException("격납고 보관 위치 등록에 실패했습니다. ownedId=" + ownedId);
-	        }
-
-	        return;
 	    }
 
 	    if (!"GARAGE".equals(storageType)) {
@@ -283,15 +275,33 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
     	    userId
     	);
 	}
+	
+	/**
+	 * 격납층 정렬 순서 저장
+	 * @param userId
+	 * @param requestList
+	 */
+	@Override
+	@Transactional
+	public void updateHangarOrder(Long userId, List<HangarOrderUpdateRequest> requestList)
+	{
+	    if (requestList == null || requestList.isEmpty()) {
+	        return;
+	    }
+
+	    for (HangarOrderUpdateRequest request : requestList) {
+	        ownedTransportMapper.updateHangarOrder(userId, request);
+	    }
+	}
 
 	/**
 	 * 등록 요청 보관 타입 검증
 	 */
 	private void validateStorageForCreate(OwnedTransportCreateRequest req)
 	{
-	    String storageType = req.getStorageType();
+		String storageType = req.getStorageType();
 
-	    if ("GARAGE".equals(storageType)) {
+	    if (STORAGE_TYPE_GARAGE.equals(storageType)) {
 	        if (req.getGarageId() == null || req.getSlotNo() == null) {
 	            throw new BusinessException("차고 보관은 차고와 슬롯이 모두 필요합니다.");
 	        }
@@ -299,13 +309,15 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        return;
 	    }
 
-	    if ("HANGAR".equals(storageType)) {
-	        if (req.getGarageId() == null) {
-	            throw new BusinessException("격납고 보관은 격납고 선택이 필요합니다.");
+	    if (isHangarRelatedStorage(storageType)) {
+	        if (req.getGarageId() != null || req.getSlotNo() != null) {
+	            throw new BusinessException("격납고 보관은 차고와 슬롯을 저장하지 않습니다.");
 	        }
 
-	        req.setSlotNo(null);
 	        validateHangarAvailableTransport(req.getModelId());
+	        validateHangarStorageLimitForCreate(req.getUserId(), storageType);
+	        req.setSlotNo(null);
+
 	        return;
 	    }
 
@@ -319,9 +331,9 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	 */
 	private void validateStorageForUpdate(OwnedTransportUpdateRequest request)
 	{
-	    String storageType = request.getStorageType();
+		String storageType = request.getStorageType();
 
-	    if ("GARAGE".equals(storageType)) {
+	    if (STORAGE_TYPE_GARAGE.equals(storageType)) {
 	        if (request.getGarageId() == null || request.getSlotNo() == null) {
 	            throw new BusinessException("차고 보관은 차고와 슬롯이 모두 필요합니다.");
 	        }
@@ -329,14 +341,19 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        return;
 	    }
 
-	    if ("HANGAR".equals(storageType)) {
-	        if (request.getGarageId() == null) {
-	            throw new BusinessException("격납고 보관은 격납고 선택이 필요합니다.");
+	    if (isHangarRelatedStorage(storageType)) {
+	        if (request.getGarageId() != null || request.getSlotNo() != null) {
+	            throw new BusinessException("격납고 보관은 차고와 슬롯을 저장하지 않습니다.");
 	        }
 
 	        request.setSlotNo(null);
 
 	        validateHangarAvailableTransportByOwnedId(request.getOwnedId());
+	        validateHangarStorageLimitForUpdate(
+	            request.getUserId(),
+	            request.getOwnedId(),
+	            storageType
+	        );
 
 	        return;
 	    }
@@ -353,7 +370,105 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	 */
 	private boolean isLocationStorage(String storageType)
 	{
-	    return "GARAGE".equals(storageType) || "HANGAR".equals(storageType);
+		return STORAGE_TYPE_GARAGE.equals(storageType);
+	}
+	
+	/**
+	 * 격납고 관련 보관 타입 여부
+	 * @param storageType
+	 * @return
+	 */
+	private boolean isHangarRelatedStorage(String storageType)
+	{
+	    return STORAGE_TYPE_HANGAR.equals(storageType)
+	        || STORAGE_TYPE_HANGAR_STORAGE.equals(storageType)
+	        || STORAGE_TYPE_HANGAR_VINEWOOD.equals(storageType);
+	}
+
+	/**
+	 * 개수 제한 대상 격납고 보관 타입 여부
+	 * @param storageType
+	 * @return
+	 */
+	private boolean isLimitedHangarStorage(String storageType)
+	{
+	    return STORAGE_TYPE_HANGAR_STORAGE.equals(storageType)
+	        || STORAGE_TYPE_HANGAR_VINEWOOD.equals(storageType);
+	}
+
+	/**
+	 * 격납고 보관 타입별 제한 개수 조회
+	 * @param storageType
+	 * @return
+	 */
+	private int getHangarStorageLimit(String storageType)
+	{
+	    if (STORAGE_TYPE_HANGAR_STORAGE.equals(storageType)) {
+	        return HANGAR_STORAGE_LIMIT;
+	    }
+
+	    if (STORAGE_TYPE_HANGAR_VINEWOOD.equals(storageType)) {
+	        return HANGAR_VINEWOOD_LIMIT;
+	    }
+
+	    return Integer.MAX_VALUE;
+	}
+
+	/**
+	 * 격납고 보관 타입 표시명 조회
+	 * @param storageType
+	 * @return
+	 */
+	private String getHangarStorageName(String storageType)
+	{
+	    if (STORAGE_TYPE_HANGAR_STORAGE.equals(storageType)) {
+	        return "격납고 저장소";
+	    }
+
+	    if (STORAGE_TYPE_HANGAR_VINEWOOD.equals(storageType)) {
+	        return "격납고 바인우드 클럽 보관소";
+	    }
+
+	    return "격납고 격납층";
+	}
+
+	/**
+	 * 등록 시 격납고 보관 타입별 제한 개수 검증
+	 * @param userId
+	 * @param storageType
+	 */
+	private void validateHangarStorageLimitForCreate(Long userId, String storageType)
+	{
+	    if (!isLimitedHangarStorage(storageType)) {
+	        return;
+	    }
+
+	    int limit = getHangarStorageLimit(storageType);
+	    int currentCount = ownedTransportMapper.countByStorageType(userId, storageType);
+
+	    if (currentCount >= limit) {
+	        throw new BusinessException(getHangarStorageName(storageType) + "는 최대 " + limit + "대까지 보관할 수 있습니다.");
+	    }
+	}
+
+	/**
+	 * 수정 시 격납고 보관 타입별 제한 개수 검증
+	 * @param userId
+	 * @param ownedId
+	 * @param storageType
+	 */
+	private void validateHangarStorageLimitForUpdate(Long userId, Long ownedId, String storageType)
+	{
+	    if (!isLimitedHangarStorage(storageType)) {
+	        return;
+	    }
+
+	    int limit = getHangarStorageLimit(storageType);
+	    int currentCount = ownedTransportMapper.countByStorageType(userId, storageType);
+
+	    if (currentCount >= limit) {
+	        throw new BusinessException(getHangarStorageName(storageType) + "는 최대 " + limit + "대까지 보관할 수 있습니다.");
+	    }
 	}
 	
 	/**

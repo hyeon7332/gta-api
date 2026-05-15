@@ -1,6 +1,5 @@
 package com.gta.dto;
 
-import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +12,6 @@ public class OwnedTransportUpdateRequest {
 	private Long ownedId;
     private Long userId;
     private Long garageId;
-
-    @Min(value = 1, message = "slotNo는 1 이상이어야 합니다.")
     private Integer slotNo;
     
     /* 보관 상태 */

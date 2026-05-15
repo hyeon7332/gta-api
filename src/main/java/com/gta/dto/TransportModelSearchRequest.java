@@ -8,8 +8,8 @@ import lombok.Data;
 public class TransportModelSearchRequest {
 	private String keyword;
     private String manufacturer;
-    private String category;
-    
+
+    private List<String> categories;
     private List<String> sources;
     private List<String> upgradeLocations;
     private List<String> features;

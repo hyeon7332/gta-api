@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.gta.dto.HangarOrderUpdateRequest;
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
 import com.gta.dto.OwnedTransportSlotDto;
@@ -71,4 +72,12 @@ public interface OwnedTransportMapper {
 
     /* 보유 이동수단 ID 기준 features 조회 */
     String selectFeaturesByOwnedId(@Param("ownedId") Long ownedId);
+    
+    /* 보관 타입별 개수 조회 */
+    int countByStorageType(@Param("userId") Long userId,
+                           @Param("storageType") String storageType);
+    
+    /* 격납층 정렬 순서 수정 */
+    int updateHangarOrder(@Param("userId") Long userId,
+                          @Param("request") HangarOrderUpdateRequest request);
 }

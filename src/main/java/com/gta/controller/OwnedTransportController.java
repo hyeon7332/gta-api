@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gta.dto.HangarOrderUpdateRequest;
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
 import com.gta.dto.OwnedTransportUpdateRequest;
@@ -69,5 +70,15 @@ public class OwnedTransportController {
     	Long userId = (Long) request.getAttribute("userId");
     	ownedTransportService.swapOwnedTransport(userId, requestBody);
     	return ResponseEntity.ok().build();
+    }
+    
+    @PatchMapping("/hangar/order")
+    public ResponseEntity<Void> updateHangarOrder(HttpServletRequest request,
+                                                  @RequestBody List<HangarOrderUpdateRequest> requestBody)
+    {
+        Long userId = (Long) request.getAttribute("userId");
+        ownedTransportService.updateHangarOrder(userId, requestBody);
+
+        return ResponseEntity.ok().build();
     }
 }

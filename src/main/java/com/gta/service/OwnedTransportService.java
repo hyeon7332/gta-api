@@ -2,6 +2,7 @@ package com.gta.service;
 
 import java.util.List;
 
+import com.gta.dto.HangarOrderUpdateRequest;
 import com.gta.dto.OwnedTransportCreateRequest;
 import com.gta.dto.OwnedTransportListDto;
 import com.gta.dto.OwnedTransportUpdateRequest;
@@ -19,4 +20,5 @@ public interface OwnedTransportService {
 
 	void swapOwnedTransport(Long userId, SwapOwnedTransportRequest request);
 
+	void updateHangarOrder(Long userId, List<HangarOrderUpdateRequest> requestBody);
 }

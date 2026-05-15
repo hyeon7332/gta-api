@@ -21,9 +21,16 @@
 	        </if>
 	
 	        <!-- 분류 -->
-	        <if test="request.category != null and request.category != ''">
-	            AND tm.transport_category = #{request.category}
-	        </if>
+			<if test="request.categories != null and request.categories.size() > 0">
+			    AND tm.transport_category IN
+			    <foreach collection="request.categories"
+			             item="category"
+			             open="("
+			             separator=","
+			             close=")">
+			        #{category}
+			    </foreach>
+			</if>
 	
 	        <!-- 획득처 -->
 	        <if test="request.sources != null and request.sources.size() > 0">
