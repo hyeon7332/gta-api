@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.gta.dto.TransportModelCreateRequest;
 import com.gta.dto.TransportModelDto;
 import com.gta.dto.TransportModelSearchRequest;
 import com.gta.dto.TransportModelUpdateRequest;
+import com.gta.exception.BusinessException;
 import com.gta.mapper.TransportModelMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -47,7 +49,9 @@ public class TransportModelServiceImpl implements TransportModelService {
 		try {
 			return transportModelMapper.insertTransportModel(request);
 		} catch (DuplicateKeyException  e) {
-			throw new IllegalArgumentException("이미 등록된 모델입니다.");
+			throw new BusinessException("이미 등록된 모델입니다.");
+		} catch (DataIntegrityViolationException e) {
+			throw new BusinessException("입력값이 허용 범위를 초과했습니다. 최고속도는 9999.99 이하로 입력해주세요.");
 		}
 	}
 
@@ -56,8 +60,10 @@ public class TransportModelServiceImpl implements TransportModelService {
 		try {
 	        return transportModelMapper.updateTransportModel(modelId, request);
 	    } catch (DuplicateKeyException e) {
-	        throw new IllegalArgumentException("이미 등록된 모델입니다.");
-	    }
+			throw new BusinessException("이미 등록된 모델입니다.");
+		} catch (DataIntegrityViolationException e) {
+			throw new BusinessException("입력값이 허용 범위를 초과했습니다. 최고속도는 9999.99 이하로 입력해주세요.");
+		}
 	}
 
 	@Override
