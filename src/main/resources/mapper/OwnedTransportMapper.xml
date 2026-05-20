@@ -58,7 +58,8 @@
 	        ot.storage_type,
 	        ot.remark,
 	        ot.image_url,
-			ot.decal
+			ot.decal,
+			ot.acquired_yn
 	
 	    FROM owned_transport ot
 	    INNER JOIN transport_model tm
@@ -157,7 +158,8 @@
 	        storage_type,
 	        remark,
 	        image_url,
-			decal
+			decal,
+			acquired_yn
 	    )
 	    VALUES
 	    (
@@ -166,7 +168,8 @@
 	        #{storageType},
 	        #{remark},
 	        #{imageUrl},
-			#{decal}
+			#{decal},
+			IFNULL(#{acquiredYn}, 'Y')
 	    )
     </insert>
 
@@ -302,7 +305,8 @@
 	    UPDATE owned_transport
 	    <set>
 	        storage_type = #{storageType},
-	        remark = #{remark}
+	        remark = #{remark},
+	        acquired_yn = #{acquiredYn}
 	
 	        <if test="imageUrl != null">
 	            ,image_url = #{imageUrl}

@@ -36,4 +36,7 @@ public class OwnedTransportCreateRequest {
 
     /* 상징 */
     private String decal;
+    
+    /* 획득 여부 (Y: 획득, N: 미획득) */
+    private String acquiredYn;
 }

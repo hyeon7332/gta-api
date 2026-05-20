@@ -24,7 +24,7 @@ public class FileUploadController {
 	private final FileUploadService fileUploadService;
 
 	@PostMapping("/owned-transport")
-	public ResponseEntity<Map<String, String>> uploadOwnedTransportImage(@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<Map<String, String>> uploadOwnedTransportImage(@RequestParam MultipartFile file) {
 		String imageUrl = fileUploadService.uploadOwnedTransportImage(file);
 
 		return ResponseEntity.ok(Map.of(

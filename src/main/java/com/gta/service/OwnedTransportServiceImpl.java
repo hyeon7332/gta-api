@@ -61,6 +61,10 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        req.setOwnStatus("보유");
 	    }
 	    
+	    if (req.getAcquiredYn() == null || req.getAcquiredYn().trim().isEmpty()) {
+	        req.setAcquiredYn("Y");
+	    }
+	    
 	    req.setUserId(userId);
 	    
 	    String storageType = req.getStorageType();
@@ -110,6 +114,10 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	public void update(Long userId, Long ownedId, OwnedTransportUpdateRequest request) {
 		// 기존 이미지 URL 조회
 		String oldImageUrl = ownedTransportMapper.selectImageUrl(ownedId, userId);
+		
+		if (request.getAcquiredYn() == null || request.getAcquiredYn().trim().isEmpty()) {
+		    request.setAcquiredYn("Y");
+		}
 		
 	    String storageType = request.getStorageType();
 
