@@ -79,7 +79,20 @@
 	
 	    <include refid="transportModelWhere" />
 	
-	    GROUP BY tm.model_id
+	    GROUP BY tm.model_id,
+		         tm.manufacturer,
+		         tm.name,
+		         tm.transport_category,
+		         tm.upgrade_location,
+		         tm.lap_time,
+		         tm.top_speed,
+		         tm.price,
+		         tm.release_date,
+		         tm.source,
+		         tm.weight,
+		         tm.drive_train,
+		         tm.seats,
+		         tm.features
 	
 	    <choose>
 	        <when test="request.sort == 'manufacturer_asc'">
