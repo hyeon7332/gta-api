@@ -134,6 +134,26 @@
 			    WHEN ot.storage_type = 'HANGAR'
 			    THEN COALESCE(ot.hangar_sort_order, 999999)
 			END ASC,
+			CASE
+		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
+		             AND tm.features LIKE '%HGS%' THEN 1
+		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
+		             AND tm.features LIKE '%HGM%' THEN 2
+		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
+		             AND tm.features LIKE '%HGL%' THEN 3
+		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
+		             AND tm.features LIKE '%HGX%' THEN 4
+		        ELSE 999
+		    END ASC,
+		    CASE
+		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
+		        THEN tm.manufacturer
+		    END ASC,
+		
+		    CASE
+		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
+		        THEN tm.name
+		    END ASC,
 	        ots.slot_no IS NULL,
 	        ots.slot_no ASC,
 	        ot.owned_id DESC
