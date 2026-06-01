@@ -128,13 +128,17 @@
 	    WHERE ot.user_id = #{userId}
 	
 	    ORDER BY
-	        g.sort_order IS NULL,
-	        g.sort_order ASC,
-	        CASE
-			    WHEN ot.storage_type = 'HANGAR'
-			    THEN COALESCE(ot.hangar_sort_order, 999999)
-			END ASC,
-			CASE
+		    g.sort_order IS NULL,
+		    g.sort_order ASC,
+		
+		    -- 격납층 정렬
+		    CASE
+		        WHEN ot.storage_type = 'HANGAR'
+		        THEN COALESCE(ot.hangar_sort_order, 999999)
+		    END ASC,
+		
+		    -- 격납고 저장소 / 바인우드
+		    CASE
 		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
 		             AND tm.features LIKE '%HGS%' THEN 1
 		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
@@ -145,18 +149,37 @@
 		             AND tm.features LIKE '%HGX%' THEN 4
 		        ELSE 999
 		    END ASC,
+		
+		    -- 페가수스 : 분류 → 제조사 → 모델명
 		    CASE
-		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
+		        WHEN ot.storage_type = 'PEGASUS'
+		        THEN tm.transport_category
+		    END ASC,
+		
+		    CASE
+		        WHEN ot.storage_type IN ('PEGASUS', 'HANGAR_STORAGE', 'HANGAR_VINEWOOD')
 		        THEN tm.manufacturer
 		    END ASC,
 		
 		    CASE
-		        WHEN ot.storage_type IN ('HANGAR_STORAGE', 'HANGAR_VINEWOOD')
+		        WHEN ot.storage_type IN ('PEGASUS', 'HANGAR_STORAGE', 'HANGAR_VINEWOOD')
 		        THEN tm.name
 		    END ASC,
-	        ots.slot_no IS NULL,
-	        ots.slot_no ASC,
-	        ot.owned_id DESC
+		
+		    -- 미배치 : 제조사 → 모델명
+		    CASE
+		        WHEN ot.storage_type = 'UNASSIGNED'
+		        THEN tm.manufacturer
+		    END ASC,
+		
+		    CASE
+		        WHEN ot.storage_type = 'UNASSIGNED'
+		        THEN tm.name
+		    END ASC,
+		
+		    ots.slot_no IS NULL,
+		    ots.slot_no ASC,
+		    ot.owned_id DESC
 	</select>
 	
 	<select id="selectOwnedTransportCount" resultType="int">
