@@ -59,7 +59,8 @@
 	        ot.remark,
 	        ot.image_url,
 			ot.decal,
-			ot.acquired_yn
+			ot.acquired_yn,
+			ot.mansion_position
 	
 	    FROM owned_transport ot
 	    INNER JOIN transport_model tm
@@ -202,7 +203,8 @@
 	        remark,
 	        image_url,
 			decal,
-			acquired_yn
+			acquired_yn,
+			mansion_position
 	    )
 	    VALUES
 	    (
@@ -212,7 +214,8 @@
 	        #{remark},
 	        #{imageUrl},
 			#{decal},
-			IFNULL(#{acquiredYn}, 'Y')
+			IFNULL(#{acquiredYn}, 'Y'),
+			#{mansionPosition}
 	    )
     </insert>
 
@@ -349,7 +352,8 @@
 	    <set>
 	        storage_type = #{storageType},
 	        remark = #{remark},
-	        acquired_yn = #{acquiredYn}
+	        acquired_yn = #{acquiredYn},
+	        mansion_position = #{mansionPosition}
 	
 	        <if test="imageUrl != null">
 	            ,image_url = #{imageUrl}

@@ -39,4 +39,7 @@ public class OwnedTransportCreateRequest {
     
     /* 획득 여부 (Y: 획득, N: 미획득) */
     private String acquiredYn;
+    
+    /* 맨션 위치(PODIUM,D1,D2) */
+    private String mansionPosition;
 }
