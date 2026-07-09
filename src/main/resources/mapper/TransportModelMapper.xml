@@ -68,9 +68,6 @@
 	        tm.price,
 	        tm.release_date,
 	        tm.source,
-	        tm.weight,
-	        tm.drive_train,
-	        tm.seats,
 	        tm.features,
 	        COUNT(ot.owned_id) AS owned_count
 	    FROM transport_model tm
@@ -89,9 +86,6 @@
 		         tm.price,
 		         tm.release_date,
 		         tm.source,
-		         tm.weight,
-		         tm.drive_train,
-		         tm.seats,
 		         tm.features
 	
 	    <choose>
@@ -174,9 +168,6 @@
             , price
             , release_date
             , source
-            , weight
-            , drive_train
-            , seats
             , features
         )
         VALUES
@@ -190,9 +181,6 @@
             , #{price}
             , #{releaseDate}
             , #{source}
-            , #{weight}
-            , #{driveTrain}
-            , #{seats}
             , #{features}
         )
     </insert>
@@ -211,9 +199,6 @@
             , price = #{request.price}
             , release_date = #{request.releaseDate}
             , source = #{request.source}
-            , weight = #{request.weight}
-            , drive_train = #{request.driveTrain}
-            , seats = #{request.seats}
             , features = #{request.features}
         WHERE model_id = #{modelId}
     </update>
@@ -239,9 +224,6 @@
 	        price,
 	        release_date,
 	        source,
-	        weight,
-	        drive_train,
-	        seats,
 	        features
 	    FROM transport_model
 	    ORDER BY manufacturer ASC, name ASC, transport_category ASC

@@ -44,15 +44,6 @@ public class TransportModelCreateRequest {
     /** 획득처 */
     private String source;
 
-    /** 차량 무게 */
-    private BigDecimal weight;
-
-    /** 구동 방식 */
-    private String driveTrain;
-
-    /** 좌석 수 */
-    private Integer seats;
-
     /** 특징 */
     private String features;
 }

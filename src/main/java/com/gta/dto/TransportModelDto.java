@@ -14,9 +14,6 @@ public class TransportModelDto {
     private Long price;
     private String releaseDate;
     private String source;
-    private Double weight;
-    private String driveTrain;
-    private Integer seats;
     private String features;
     private Integer ownedCount;
 }
