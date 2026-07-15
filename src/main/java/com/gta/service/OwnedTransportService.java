@@ -21,4 +21,6 @@ public interface OwnedTransportService {
 	void swapOwnedTransport(Long userId, SwapOwnedTransportRequest request);
 
 	void updateHangarOrder(Long userId, List<HangarOrderUpdateRequest> requestBody);
+
+	OwnedTransportListDto getDetail(Long userId, Long ownedId);
 }

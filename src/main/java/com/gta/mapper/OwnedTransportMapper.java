@@ -15,6 +15,10 @@ import com.gta.dto.OwnedTransportUpdateRequest;
 public interface OwnedTransportMapper {
 	/* 목록 조회 */
 	List<OwnedTransportListDto> selectList(@Param("userId") Long userId);
+	
+	/* 상세 조회 */
+	OwnedTransportListDto getDetail(@Param("userId")Long userId, 
+									@Param("ownedId")Long ownedId);
 
 	/* 개수 조회 */
 	int selectOwnedTransportCount(@Param("userId") Long userId);
@@ -80,4 +84,5 @@ public interface OwnedTransportMapper {
     /* 격납층 정렬 순서 수정 */
     int updateHangarOrder(@Param("userId") Long userId,
                           @Param("request") HangarOrderUpdateRequest request);
+
 }

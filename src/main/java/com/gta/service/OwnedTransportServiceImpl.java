@@ -46,6 +46,14 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	{
 	    return ownedTransportMapper.selectList(userId);
 	}
+	
+	/**
+	 * 보유 이동수단 상세 조회
+	 */
+	@Override
+	public OwnedTransportListDto getDetail(Long userId, Long ownedId) {
+		return ownedTransportMapper.getDetail(userId, ownedId);
+	}
 
 	/**
 	 * 보유 이동수단 등록

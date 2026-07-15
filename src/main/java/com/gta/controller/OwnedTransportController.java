@@ -30,6 +30,9 @@ public class OwnedTransportController {
 	
 	private final OwnedTransportService ownedTransportService;
     
+    /**
+     * 보유 이동수단 목록 조회
+     */
     @GetMapping
     public List<OwnedTransportListDto> getList(HttpServletRequest request)
     {
@@ -37,6 +40,20 @@ public class OwnedTransportController {
     	return ownedTransportService.getList(userId);
     }
     
+    /**
+     * 보유 이동수단 상세 조회
+     */
+    @GetMapping("/{ownedId}")
+    public OwnedTransportListDto getDetail(HttpServletRequest request,
+    									   @PathVariable Long ownedId)
+    {
+		Long userId = (Long) request.getAttribute("userId");
+    	return ownedTransportService.getDetail(userId, ownedId);
+    }
+    
+    /**
+     * 보유 이동수단 등록
+     */
     @PostMapping
     public ResponseEntity<Integer> create(HttpServletRequest request,
     									  @RequestBody OwnedTransportCreateRequest req)
@@ -46,6 +63,9 @@ public class OwnedTransportController {
         return ResponseEntity.ok(inserted);
     }
     
+    /**
+     * 보유 이동수단 수정
+     */
     @PatchMapping("/{ownedId}")
     public void update(HttpServletRequest request,
     				   @PathVariable Long ownedId,
@@ -55,6 +75,9 @@ public class OwnedTransportController {
     	ownedTransportService.update(userId, ownedId, requestBody);
     }
     
+    /**
+     * 보유 이동수단 삭제
+     */
     @DeleteMapping("/{ownedId}")
     public ResponseEntity<Void> delete(HttpServletRequest request,
     								   @PathVariable Long ownedId)
@@ -64,6 +87,9 @@ public class OwnedTransportController {
         return ResponseEntity.ok().build();
     }
     
+    /**
+     * 보유 이동수단 슬롯 위치 교체
+     */
     @PatchMapping("/swap")
     public ResponseEntity<Void> swap(HttpServletRequest request,
     								 @RequestBody SwapOwnedTransportRequest requestBody) {
@@ -72,6 +98,9 @@ public class OwnedTransportController {
     	return ResponseEntity.ok().build();
     }
     
+    /**
+     * 격납층 순서 변경
+     */
     @PatchMapping("/hangar/order")
     public ResponseEntity<Void> updateHangarOrder(HttpServletRequest request,
                                                   @RequestBody List<HangarOrderUpdateRequest> requestBody)
