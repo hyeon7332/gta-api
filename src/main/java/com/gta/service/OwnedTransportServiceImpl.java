@@ -1,5 +1,6 @@
 package com.gta.service;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -152,11 +153,23 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 	        if (isRemoved || isChanged) {
 	            try {
 	                String fileName = oldImageUrl.substring(oldImageUrl.lastIndexOf("/") + 1);
-	                java.io.File file = new java.io.File(uploadPath, fileName);
-
-	                if (file.exists()) {
-	                    file.delete();
+	                
+	                File originalFile = new File(uploadPath, fileName);
+	                
+	                String thumbName = fileName.substring(0, fileName.lastIndexOf('.'))
+	                        + "_thumb"
+	                        + fileName.substring(fileName.lastIndexOf('.'));
+	                
+	                File thumbFile = new File(uploadPath, thumbName);
+	                
+	                if (originalFile.exists()) {
+	                    originalFile.delete();
 	                }
+
+	                if (thumbFile.exists()) {
+	                    thumbFile.delete();
+	                }
+
 	            } catch (Exception e) {
 	                e.printStackTrace();
 	            }
@@ -221,13 +234,23 @@ public class OwnedTransportServiceImpl implements OwnedTransportService {
 		
 		if (imageUrl != null && !imageUrl.isEmpty()) {
 		    try {
-		        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+		    	String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
 
-		        java.io.File file = new java.io.File(uploadPath, fileName);
+		    	File originalFile = new File(uploadPath, fileName);
 
-		        if (file.exists()) {
-		            file.delete();
-		        }
+		    	String thumbName = fileName.substring(0, fileName.lastIndexOf('.'))
+		    	        + "_thumb"
+		    	        + fileName.substring(fileName.lastIndexOf('.'));
+
+		    	File thumbFile = new File(uploadPath, thumbName);
+
+		    	if (originalFile.exists()) {
+		    	    originalFile.delete();
+		    	}
+
+		    	if (thumbFile.exists()) {
+		    	    thumbFile.delete();
+		    	}
 		    } catch (Exception e) {
 		        e.printStackTrace();
 		    }

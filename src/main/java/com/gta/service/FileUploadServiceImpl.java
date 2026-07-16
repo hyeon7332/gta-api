@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import net.coobird.thumbnailator.Thumbnails;
+
 @Service
 public class FileUploadServiceImpl implements FileUploadService {
 	
@@ -37,7 +39,21 @@ public class FileUploadServiceImpl implements FileUploadService {
         File target = new File(uploadPath, savedName);
 
         try {
+        	// 원본 저장
             file.transferTo(target);
+            
+            // 썸네일 생성
+            String thumbName = savedName.substring(0, savedName.lastIndexOf('.'))
+            		+ "_thumb"
+            		+ ext;
+            
+            File thumFile = new File(uploadPath, thumbName);
+            
+            Thumbnails.of(target)
+            		  .size(400, 228)
+            		  .keepAspectRatio(true)
+            		  .toFile(thumFile);
+            
         } catch (IOException e) {
         	throw new RuntimeException("파일 저장 실패", e);
         }
