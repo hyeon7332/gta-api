@@ -74,10 +74,10 @@
 	        (
 	            SELECT
 	                tm_inner.model_id,
-	                DENSE_RANK() OVER (ORDER BY tm_inner.lap_time ASC) AS lap_rank,
+	                RANK() OVER (ORDER BY tm_inner.lap_time ASC) AS lap_rank,
 	                COUNT(*) OVER () AS lap_total_count,
 	                COUNT(*) OVER (PARTITION BY tm_inner.transport_category) AS lap_category_total_count,
-	                DENSE_RANK() OVER (
+	                RANK() OVER (
 	                    PARTITION BY tm_inner.transport_category
 	                    ORDER BY tm_inner.lap_time ASC
 	                ) AS lap_category_rank
@@ -100,10 +100,10 @@
 	        (
 	            SELECT
 	                tm_inner.model_id,
-	                DENSE_RANK() OVER (ORDER BY tm_inner.top_speed DESC) AS speed_rank,
+	                RANK() OVER (ORDER BY tm_inner.top_speed DESC) AS speed_rank,
 	                COUNT(*) OVER () AS speed_total_count,
 	                COUNT(*) OVER (PARTITION BY tm_inner.transport_category) AS speed_category_total_count,
-	                DENSE_RANK() OVER (
+	                RANK() OVER (
 	                    PARTITION BY tm_inner.transport_category
 	                    ORDER BY tm_inner.top_speed DESC
 	                ) AS speed_category_rank
@@ -249,10 +249,10 @@
 	        (
 	            SELECT
 	                tm_inner.model_id,
-	                DENSE_RANK() OVER (ORDER BY tm_inner.lap_time ASC) AS lap_rank,
+	                RANK() OVER (ORDER BY tm_inner.lap_time ASC) AS lap_rank,
 	                COUNT(*) OVER () AS lap_total_count,
 	                COUNT(*) OVER (PARTITION BY tm_inner.transport_category) AS lap_category_total_count,
-	                DENSE_RANK() OVER (
+	                RANK() OVER (
 	                    PARTITION BY tm_inner.transport_category
 	                    ORDER BY tm_inner.lap_time ASC
 	                ) AS lap_category_rank
