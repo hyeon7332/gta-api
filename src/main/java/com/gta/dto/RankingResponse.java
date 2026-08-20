@@ -38,4 +38,7 @@ public class RankingResponse {
 
     // 보관 중인 차고명
     private String garageName;
+    
+    // 이동수단 특징
+    private String features;
 }

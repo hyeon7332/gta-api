@@ -1,28 +1,19 @@
 package com.gta.service;
 
-import java.util.List;
-
-import com.gta.dto.RankingResponse;
+import com.gta.dto.RankingListResponse;
+import com.gta.dto.RankingSearchRequest;
 
 /**
  * 이동수단 랭킹 서비스
  */
 public interface RankingService {
 
-	/**
-	 * 이동수단 랭킹 조회
-	 * 
-	 * @param userId
-     * @param type 랭킹 기준
-     *             - LAP_TIME : 랩타임
-     *             - TOP_SPEED : 최고속도
-     * @param category 이동수단 분류
-     *                 - null 또는 빈 값이면 전체 분류 조회
+    /**
+     * 이동수단 랭킹 목록 조회
+     *
+     * @param userId 로그인 사용자 ID
+     * @param filter 랭킹 조회 조건
      * @return 이동수단 랭킹 목록
-	 */
-	List<RankingResponse> getRanking(
-	        Long userId,
-	        String type,
-	        String category
-	);
+     */
+	RankingListResponse getRanking(Long userId, RankingSearchRequest filter);
 }
