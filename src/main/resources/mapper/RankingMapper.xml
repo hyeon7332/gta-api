@@ -5,6 +5,32 @@
   
 <mapper namespace="com.gta.mapper.RankingMapper">
 
+	<!-- 랭킹 공통 조회 조건 -->
+	<sql id="rankingWhere">
+		WHERE 1 = 1
+
+	    <if test="filter.categoryList != null and filter.categoryList.size() > 0">
+	        AND tm.transport_category IN
+	        <foreach collection="filter.categoryList"
+	                 item="category"
+	                 open="("
+	                 separator=","
+	                 close=")">
+	            #{category}
+	        </foreach>
+	    </if>
+	
+	    <choose>
+	        <when test="filter.type == 'LAP_TIME'">
+	            AND tm.lap_time IS NOT NULL
+	        </when>
+	
+	        <otherwise>
+	            AND tm.top_speed IS NOT NULL
+	        </otherwise>
+	    </choose>
+	</sql>
+
 	<!-- 상위 1~3위 랭킹 조회 -->
     <select id="selectTop3"
             resultType="com.gta.dto.RankingResponse">
@@ -28,23 +54,18 @@
                   AND ot2.user_id = #{userId}
                   AND ot2.acquired_yn = 'Y'
             )
-        WHERE 1 = 1
-
-        <if test="filter.category != null and filter.category != ''">
-            AND tm.transport_category = #{filter.category}
-        </if>
+        
+        <include refid="rankingWhere"/>
 
         <choose>
-            <when test="filter.type == 'LAP_TIME'">
-                AND tm.lap_time IS NOT NULL
-                ORDER BY tm.lap_time ASC
-            </when>
-
-            <otherwise>
-                AND tm.top_speed IS NOT NULL
-                ORDER BY tm.top_speed DESC
-            </otherwise>
-        </choose>
+	        <when test="filter.type == 'LAP_TIME'">
+	            ORDER BY tm.lap_time ASC
+	        </when>
+	
+	        <otherwise>
+	            ORDER BY tm.top_speed DESC
+	        </otherwise>
+	    </choose>
 
         LIMIT 3
 
@@ -73,20 +94,15 @@
                   AND ot2.user_id = #{userId}
                   AND ot2.acquired_yn = 'Y'
             )
-        WHERE 1 = 1
-
-        <if test="filter.category != null and filter.category != ''">
-            AND tm.transport_category = #{filter.category}
-        </if>
+        
+        <include refid="rankingWhere"/>
 
         <choose>
             <when test="filter.type == 'LAP_TIME'">
-                AND tm.lap_time IS NOT NULL
                 ORDER BY tm.lap_time ASC
             </when>
 
             <otherwise>
-                AND tm.top_speed IS NOT NULL
                 ORDER BY tm.top_speed DESC
             </otherwise>
         </choose>
@@ -102,21 +118,8 @@
         SELECT
             GREATEST(COUNT(*) - 3, 0)
         FROM transport_model tm
-        WHERE 1 = 1
-
-        <if test="filter.category != null and filter.category != ''">
-            AND tm.transport_category = #{filter.category}
-        </if>
-
-        <choose>
-            <when test="filter.type == 'LAP_TIME'">
-                AND tm.lap_time IS NOT NULL
-            </when>
-
-            <otherwise>
-                AND tm.top_speed IS NOT NULL
-            </otherwise>
-        </choose>
+        
+        <include refid="rankingWhere"/>
 
     </select>
 	    

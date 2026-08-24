@@ -1,5 +1,7 @@
 package com.gta.dto;
 
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -12,7 +14,7 @@ public class RankingSearchRequest {
     private String type;
 
     // 이동수단 분류
-    private String category;
+    private List<String> categoryList;
 
     //  현재 페이지
     private int page = 1;

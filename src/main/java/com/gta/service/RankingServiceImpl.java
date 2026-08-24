@@ -29,11 +29,11 @@ public class RankingServiceImpl implements RankingService {
             throw new IllegalArgumentException("지원하지 않는 랭킹 기준입니다.");
         }
         
-        // 전체 선택 시 빈 문자열을 null로 정리
-        if (filter.getCategory() != null
-                && filter.getCategory().isBlank())
+        // 선택된 이동수단 분류가 없으면 null로 정리
+        if (filter.getCategoryList() != null
+                && filter.getCategoryList().isEmpty())
         {
-            filter.setCategory(null);
+            filter.setCategoryList(null);
         }
         
         // 페이지 기본값 보정
