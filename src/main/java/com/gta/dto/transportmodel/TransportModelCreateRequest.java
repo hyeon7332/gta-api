@@ -1,4 +1,4 @@
-package com.gta.dto;
+package com.gta.dto.transportmodel;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -8,12 +8,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 이동수단 모델 수정 요청 DTO
+ * 이동수단 모델 등록 요청 DTO
  */
 @Getter
 @Setter
-public class TransportModelUpdateRequest {
-
+public class TransportModelCreateRequest {
     /** 제조사 */
     @NotBlank(message = "manufacturer는 필수입니다.")
     private String manufacturer;
@@ -34,6 +33,9 @@ public class TransportModelUpdateRequest {
 
     /** 최고속도 */
     private BigDecimal topSpeed;
+    
+    /** 개인 측정 랩타임 */
+    private Integer personalLapTime;
 
     /** 가격 */
     private Long price;

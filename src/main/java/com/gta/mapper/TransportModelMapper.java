@@ -5,10 +5,10 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.gta.dto.TransportModelCreateRequest;
-import com.gta.dto.TransportModelDto;
-import com.gta.dto.TransportModelSearchRequest;
-import com.gta.dto.TransportModelUpdateRequest;
+import com.gta.dto.transportmodel.TransportModelCreateRequest;
+import com.gta.dto.transportmodel.TransportModelDto;
+import com.gta.dto.transportmodel.TransportModelSearchRequest;
+import com.gta.dto.transportmodel.TransportModelUpdateRequest;
 
 @Mapper
 public interface TransportModelMapper {

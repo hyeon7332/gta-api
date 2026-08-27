@@ -8,10 +8,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import com.gta.dto.TransportModelCreateRequest;
-import com.gta.dto.TransportModelDto;
-import com.gta.dto.TransportModelSearchRequest;
-import com.gta.dto.TransportModelUpdateRequest;
+import com.gta.dto.transportmodel.TransportModelCreateRequest;
+import com.gta.dto.transportmodel.TransportModelDto;
+import com.gta.dto.transportmodel.TransportModelSearchRequest;
+import com.gta.dto.transportmodel.TransportModelUpdateRequest;
 import com.gta.exception.BusinessException;
 import com.gta.mapper.TransportModelMapper;
 

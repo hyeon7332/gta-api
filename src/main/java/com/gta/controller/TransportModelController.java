@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gta.dto.TransportModelCreateRequest;
-import com.gta.dto.TransportModelDto;
-import com.gta.dto.TransportModelSearchRequest;
-import com.gta.dto.TransportModelUpdateRequest;
+import com.gta.dto.transportmodel.TransportModelCreateRequest;
+import com.gta.dto.transportmodel.TransportModelDto;
+import com.gta.dto.transportmodel.TransportModelSearchRequest;
+import com.gta.dto.transportmodel.TransportModelUpdateRequest;
 import com.gta.service.TransportModelService;
 
 import jakarta.validation.Valid;
@@ -81,9 +81,9 @@ public class TransportModelController {
     }
     
     /**
-     * 이동수단 모델 옵션 목록 조회
+     * 보유 이동수단 등록/수정 시 선택할 이동수단 모델 목록 조회
      *
-     * @return 이동수단 모델 옵션 목록
+     * @return 선택 가능한 이동수단 모델 목록
      */
     @GetMapping("/options")
     public List<TransportModelDto> getOptions()
