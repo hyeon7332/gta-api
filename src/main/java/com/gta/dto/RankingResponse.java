@@ -7,7 +7,7 @@ import lombok.Data;
 
 /**
  * 이동수단 랭킹 조회 응답 DTO
- * - 랩타임 / 최고속도 랭킹에서 공통으로 사용
+ * - 랩타임 / 개인 측정 랩타임 / 최고속도 랭킹에서 공통으로 사용
  * - 이동수단 모델 정보와 사용자의 보유 이동수단 정보를 함께 반환
  */
 @Data
@@ -30,6 +30,9 @@ public class RankingResponse {
     // 최고속도
     private BigDecimal topSpeed;
 
+    // 개인 측정 랩타임
+    private Integer personalLapTime;
+    
     // 보유 이동수단 대표 이미지 URL
     private String imageUrl;
 

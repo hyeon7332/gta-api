@@ -23,9 +23,10 @@ public class RankingServiceImpl implements RankingService {
 	@Override
 	public RankingListResponse getRanking(Long userId, RankingSearchRequest filter) {
 		// 랭킹 기준값 검증
-        if (!"LAP_TIME".equals(filter.getType())
-                && !"TOP_SPEED".equals(filter.getType()))
-        {
+		if (!"LAP_TIME".equals(filter.getType())
+		        && !"TOP_SPEED".equals(filter.getType())
+		        && !"PERSONAL_LAP_TIME".equals(filter.getType()))
+		{
             throw new IllegalArgumentException("지원하지 않는 랭킹 기준입니다.");
         }
         
