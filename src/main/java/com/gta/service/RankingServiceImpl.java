@@ -50,8 +50,12 @@ public class RankingServiceImpl implements RankingService {
         }
 
         // 1~3위 조회
-        List<RankingResponse> top3 =
-                rankingMapper.selectTop3(userId, filter);
+        List<RankingResponse> top3 = null;
+        
+        if (filter.isIncludeTop3())
+        {
+            top3 = rankingMapper.selectTop3(userId, filter);
+        }
 
         // 4위 이하 전체 건수
         int totalCount =

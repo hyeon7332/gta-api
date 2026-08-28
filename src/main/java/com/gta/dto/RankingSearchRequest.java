@@ -21,4 +21,7 @@ public class RankingSearchRequest {
 
     // 페이지당 조회 개수
     private int size = 25;
+    
+    // TOP3 조회 여부
+    private boolean includeTop3 = true;
 }
