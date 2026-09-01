@@ -13,7 +13,7 @@ public class TransportModelSearchRequest {
 	private String keyword;
 	
 	/** 제조사 */
-    private String manufacturer;
+    private List<String> manufacturers;
 
     /** 이동수단 분류 목록 */
     private List<String> categories;

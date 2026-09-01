@@ -17,8 +17,15 @@
 	        </if>
 	
 	        <!-- 제조사 -->
-	        <if test="request.manufacturer != null and request.manufacturer != ''">
-	            AND tm.manufacturer = #{request.manufacturer}
+	        <if test="request.manufacturers != null and request.manufacturers.size() > 0">
+	            AND tm.manufacturer IN
+			    <foreach collection="request.manufacturers"
+			             item="manufacturer"
+			             open="("
+			             separator=","
+			             close=")">
+			        #{manufacturer}
+			    </foreach>
 	        </if>
 	
 	        <!-- 분류 -->

@@ -18,9 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 차고(보관 장소) 조회 컨트롤러
- *
- * - 차고 목록 조회 API 제공
+ * 차고 목록 조회 API 컨트롤러
  */
 @RestController
 @RequiredArgsConstructor
