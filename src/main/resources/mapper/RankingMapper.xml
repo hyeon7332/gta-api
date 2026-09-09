@@ -37,19 +37,20 @@
 
 	<!-- 상위 1~3위 랭킹 조회 -->
     <select id="selectTop3"
-            resultType="com.gta.dto.RankingResponse">
+            resultType="com.gta.dto.ranking.RankingResponse">
 
         SELECT
-            tm.model_id           AS modelId,
-            tm.manufacturer       AS manufacturer,
-            tm.name               AS name,
-            tm.transport_category AS transportCategory,
-            tm.lap_time           AS lapTime,
-            tm.top_speed          AS topSpeed,
-            tm.personal_lap_time  AS personalLapTime,
-            tm.features           AS features,
-            ot.owned_id           AS ownedId,
-            ot.image_url          AS imageUrl
+             tm.model_id           
+            ,tm.manufacturer       
+            ,tm.price              
+            ,tm.name               
+            ,tm.transport_category 
+            ,tm.lap_time           
+            ,tm.top_speed          
+            ,tm.personal_lap_time  
+            ,tm.features           
+            ,ot.owned_id           
+            ,ot.image_url          
         FROM transport_model tm
         LEFT JOIN owned_transport ot
             ON ot.owned_id = (
@@ -82,19 +83,20 @@
     
     <!-- 4위 이하 랭킹 페이징 조회 -->
     <select id="selectRankingPage"
-            resultType="com.gta.dto.RankingResponse">
+            resultType="com.gta.dto.ranking.RankingResponse">
 
         SELECT
-            tm.model_id           AS modelId,
-            tm.manufacturer       AS manufacturer,
-            tm.name               AS name,
-            tm.transport_category AS transportCategory,
-            tm.lap_time           AS lapTime,
-            tm.top_speed          AS topSpeed,
-            tm.personal_lap_time  AS personalLapTime,
-            tm.features           AS features,
-            ot.owned_id           AS ownedId,
-            ot.image_url          AS imageUrl
+             tm.model_id           
+            ,tm.manufacturer    
+            ,tm.price   
+            ,tm.name               
+            ,tm.transport_category 
+            ,tm.lap_time           
+            ,tm.top_speed          
+            ,tm.personal_lap_time  
+            ,tm.features           
+            ,ot.owned_id           
+            ,ot.image_url          
         FROM transport_model tm
         LEFT JOIN owned_transport ot
             ON ot.owned_id = (

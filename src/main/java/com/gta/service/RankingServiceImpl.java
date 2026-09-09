@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.gta.dto.RankingListResponse;
-import com.gta.dto.RankingResponse;
 import com.gta.dto.RankingSearchRequest;
+import com.gta.dto.ranking.RankingResponse;
 import com.gta.mapper.RankingMapper;
 
 import lombok.RequiredArgsConstructor;

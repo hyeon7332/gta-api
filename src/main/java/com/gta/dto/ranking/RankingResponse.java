@@ -1,4 +1,4 @@
-package com.gta.dto;
+package com.gta.dto.ranking;
 
 import java.math.BigDecimal;
 
@@ -38,10 +38,11 @@ public class RankingResponse {
 
     // 보유 이동수단 고유 ID
     private Long ownedId;
-
-    // 보관 중인 차고명
-    private String garageName;
     
     // 이동수단 특징
     private String features;
+    
+    // 가격
+    private Long price;
+
 }

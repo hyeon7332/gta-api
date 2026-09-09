@@ -2,6 +2,8 @@ package com.gta.dto;
 
 import java.util.List;
 
+import com.gta.dto.ranking.RankingResponse;
+
 import lombok.Data;
 
 /**

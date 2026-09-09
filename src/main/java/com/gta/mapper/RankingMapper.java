@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.gta.dto.RankingResponse;
 import com.gta.dto.RankingSearchRequest;
+import com.gta.dto.ranking.RankingResponse;
 
 /**
  * 이동수단 랭킹 Mapper

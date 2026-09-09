@@ -23,6 +23,9 @@ public class CommonCodeController {
 
     /**
      * 그룹코드 기준 공통 코드 목록 조회
+     * 
+     * @param groupCode 조회할 공통 코드 그룹 코드
+     * @return 해당 그룹의 공통 코드 목록
      */
     @GetMapping("/api/common-codes")
     public List<CommonCodeDto> selectCommonCodes(@RequestParam String groupCode) {

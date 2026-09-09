@@ -24,19 +24,15 @@ public class RankingController {
 	private final RankingService rankingService;
 	
 	/**
-     * 이동수단 랭킹 목록 조회
-     * 
-     * @param userId 로그인 사용자 ID
-     * @param type 랭킹 기준 (LAP_TIME: 랩타임, TOP_SPEED: 최고속도)
-     * @param category 이동수단 분류 (미지정 시 전체)
-     * @param page 현재 페이지
-     * @param size 페이지당 조회 개수
-     * @return TOP3 + 4위 이하 페이징 목록
-     */
+	 * 이동수단 랭킹 목록 조회
+	 * 
+	 * @param request 로그인 사용자 정보를 확인하기 위한 HTTP 요청
+	 * @param filter 랭킹 검색 조건
+	 * @return TOP3 + 4위 이하 페이징 목록
+	 */
 	@GetMapping
-	public RankingListResponse getRanking(
-			HttpServletRequest request,
-			@ModelAttribute RankingSearchRequest filter)
+	public RankingListResponse getRanking(HttpServletRequest request,
+										  @ModelAttribute RankingSearchRequest filter)
     {
 		Long userId = (Long) request.getAttribute("userId");
 		
