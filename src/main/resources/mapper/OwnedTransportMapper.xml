@@ -189,6 +189,7 @@
 	        tm.transport_category,
 	        tm.lap_time,
 	        tm.top_speed,
+	        tm.personal_lap_time,
 	        tm.price,
 	        tm.release_date,
 	        tm.upgrade_location,
@@ -204,6 +205,11 @@
 	        speed_rank.speed_category_rank,
 	        speed_rank.speed_total_count,
 	        speed_rank.speed_category_total_count,
+	        
+	        personal_lap_rank.personal_lap_rank,
+			personal_lap_rank.personal_lap_category_rank,
+			personal_lap_rank.personal_lap_total_count,
+			personal_lap_rank.personal_lap_category_total_count,
 	
 	        g.garage_id,
 	        ugs.alias,
@@ -288,6 +294,36 @@
 	        ) ranked_speed
 	    ) speed_rank
 	        ON speed_rank.model_id = tm.model_id
+	        
+	    LEFT JOIN
+		(
+		    SELECT
+		        ranked_personal_lap.model_id,
+		        ranked_personal_lap.personal_lap_rank,
+		        ranked_personal_lap.personal_lap_category_rank,
+		        ranked_personal_lap.personal_lap_total_count,
+		        ranked_personal_lap.personal_lap_category_total_count
+		    FROM
+		    (
+		        SELECT
+		            tm_inner.model_id,
+		            RANK() OVER (
+		                ORDER BY tm_inner.personal_lap_time ASC
+		            ) AS personal_lap_rank,
+		            COUNT(*) OVER () AS personal_lap_total_count,
+		            COUNT(*) OVER (
+		                PARTITION BY tm_inner.transport_category
+		            ) AS personal_lap_category_total_count,
+		            RANK() OVER (
+		                PARTITION BY tm_inner.transport_category
+		                ORDER BY tm_inner.personal_lap_time ASC
+		            ) AS personal_lap_category_rank
+		        FROM transport_model tm_inner
+		        WHERE tm_inner.personal_lap_time IS NOT NULL
+		          AND tm_inner.personal_lap_time > 0
+		    ) ranked_personal_lap
+		) personal_lap_rank
+		    ON personal_lap_rank.model_id = tm.model_id
 	
 	    LEFT JOIN owned_transport_storage ots
 	        ON ots.owned_id = ot.owned_id
