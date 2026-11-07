@@ -33,9 +33,6 @@ public class TransportModelCreateRequest {
 
     /** 최고속도 */
     private BigDecimal topSpeed;
-    
-    /** 개인 측정 랩타임 */
-    private Integer personalLapTime;
 
     /** 가격 */
     private Long price;

@@ -29,9 +29,6 @@ public class RankingResponse {
 
     // 최고속도
     private BigDecimal topSpeed;
-
-    // 개인 측정 랩타임
-    private Integer personalLapTime;
     
     // 보유 이동수단 대표 이미지 URL
     private String imageUrl;

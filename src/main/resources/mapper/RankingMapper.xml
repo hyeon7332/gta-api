@@ -24,10 +24,6 @@
 	        <when test="filter.type == 'LAP_TIME'">
 	            AND tm.lap_time IS NOT NULL
 	        </when>
-	        
-	        <when test="filter.type == 'PERSONAL_LAP_TIME'">
-		        AND tm.personal_lap_time IS NOT NULL
-		    </when>
 	
 	        <otherwise>
 	            AND tm.top_speed IS NOT NULL
@@ -47,7 +43,6 @@
             ,tm.transport_category 
             ,tm.lap_time           
             ,tm.top_speed          
-            ,tm.personal_lap_time  
             ,tm.features           
             ,ot.owned_id           
             ,ot.image_url          
@@ -67,10 +62,6 @@
 	        <when test="filter.type == 'LAP_TIME'">
 	            ORDER BY tm.lap_time ASC
 	        </when>
-	        
-	        <when test="filter.type == 'PERSONAL_LAP_TIME'">
-		        ORDER BY tm.personal_lap_time ASC
-		    </when>
 	
 	        <otherwise>
 	            ORDER BY tm.top_speed DESC
@@ -93,7 +84,6 @@
             ,tm.transport_category 
             ,tm.lap_time           
             ,tm.top_speed          
-            ,tm.personal_lap_time  
             ,tm.features           
             ,ot.owned_id           
             ,ot.image_url          
@@ -113,10 +103,6 @@
             <when test="filter.type == 'LAP_TIME'">
                 ORDER BY tm.lap_time ASC
             </when>
-            
-            <when test="filter.type == 'PERSONAL_LAP_TIME'">
-		        ORDER BY tm.personal_lap_time ASC
-		    </when>
 
             <otherwise>
                 ORDER BY tm.top_speed DESC

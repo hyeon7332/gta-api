@@ -73,7 +73,6 @@
 	        tm.upgrade_location,
 	        tm.lap_time,
 	        tm.top_speed,
-	        tm.personal_lap_time,
 	        tm.price,
 	        tm.release_date,
 	        tm.source,
@@ -92,7 +91,6 @@
 		         tm.upgrade_location,
 		         tm.lap_time,
 		         tm.top_speed,
-		         tm.personal_lap_time,
 		         tm.price,
 		         tm.release_date,
 		         tm.source,
@@ -134,13 +132,6 @@
 	            ORDER BY tm.top_speed DESC
 	        </when>
 	        
-	        <when test="request.sort == 'personalLapTime_asc'">
-			    ORDER BY tm.personal_lap_time ASC
-			</when>
-			<when test="request.sort == 'personalLapTime_desc'">
-			    ORDER BY tm.personal_lap_time DESC
-			</when>
-	
 	        <when test="request.sort == 'price_asc'">
 	            ORDER BY tm.price ASC
 	        </when>
@@ -183,7 +174,6 @@
             , upgrade_location
             , lap_time
             , top_speed
-            , personal_lap_time
             , price
             , release_date
             , source
@@ -197,7 +187,6 @@
             , #{upgradeLocation}
             , #{lapTime}
             , #{topSpeed}
-            , #{personalLapTime}
             , #{price}
             , #{releaseDate}
             , #{source}
@@ -216,7 +205,6 @@
             , upgrade_location = #{request.upgradeLocation}
             , lap_time = #{request.lapTime}
             , top_speed = #{request.topSpeed}
-            , personal_lap_time = #{request.personalLapTime}
             , price = #{request.price}
             , release_date = #{request.releaseDate}
             , source = #{request.source}

@@ -64,9 +64,6 @@ public class OwnedTransportListDto {
 
     // 최고속도
     private Double topSpeed;
-
-    // 개인 랩타임
-    private Integer personalLapTime;
     
     // 랩타임 전체 순위
     private Integer lapRank;
@@ -91,18 +88,6 @@ public class OwnedTransportListDto {
 
     // 최고속도 카테고리 이동수단 수
     private Integer speedCategoryTotalCount;
-    
-    // 개인 랩타임 전체 순위
-    private Integer personalLapRank;
-
-    // 개인 랩타임 카테고리 순위
-    private Integer personalLapCategoryRank;
-
-    // 개인 랩타임 전체 이동수단 수
-    private Integer personalLapTotalCount;
-
-    // 개인 랩타임 카테고리 이동수단 수
-    private Integer personalLapCategoryTotalCount;
     
     // 획득 경로
     private String source;
