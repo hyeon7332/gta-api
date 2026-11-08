@@ -41,5 +41,8 @@ public class RankingResponse {
     
     // 가격
     private Long price;
+    
+    // 랭킹 순위 (공동 순위 포함)
+    private Integer rank;
 
 }

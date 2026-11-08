@@ -57,12 +57,10 @@ public class RankingServiceImpl implements RankingService {
         }
 
         // 4위 이하 전체 건수
-        int totalCount =
-                rankingMapper.selectRankingCount(userId, filter);
+        int totalCount = rankingMapper.selectRankingCount(userId, filter);
 
         // 4위 이하 페이징 OFFSET
-        int offset =
-        		3 + (filter.getPage() - 1) * filter.getSize();
+        int offset = (filter.getPage() - 1) * filter.getSize();
 
         // 현재 페이지의 4위 이하 목록 조회
         List<RankingResponse> items =

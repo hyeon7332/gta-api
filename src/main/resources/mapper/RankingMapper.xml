@@ -59,59 +59,125 @@
         <include refid="rankingWhere"/>
 
         <choose>
-	        <when test="filter.type == 'LAP_TIME'">
-	            ORDER BY tm.lap_time ASC
-	        </when>
-	
-	        <otherwise>
-	            ORDER BY tm.top_speed DESC
-	        </otherwise>
-	    </choose>
+		    <!-- 랩타임 랭킹 -->
+		    <when test="filter.type == 'LAP_TIME'">
+		        ORDER BY
+		            tm.lap_time ASC,
+		            tm.top_speed DESC,
+		            tm.price DESC,
+		            tm.name ASC,
+		            tm.model_id ASC
+		    </when>
+		
+		    <!-- 최고속도 랭킹 -->
+		    <otherwise>
+		        ORDER BY
+		            tm.top_speed DESC,
+		            tm.lap_time ASC,
+		            tm.price DESC,
+		            tm.name ASC,
+		            tm.model_id ASC
+		    </otherwise>
+		</choose>
 
         LIMIT 3
-
     </select>
     
     <!-- 4위 이하 랭킹 페이징 조회 -->
-    <select id="selectRankingPage"
-            resultType="com.gta.dto.ranking.RankingResponse">
-
-        SELECT
-             tm.model_id           
-            ,tm.manufacturer    
-            ,tm.price   
-            ,tm.name               
-            ,tm.transport_category 
-            ,tm.lap_time           
-            ,tm.top_speed          
-            ,tm.features           
-            ,ot.owned_id           
-            ,ot.image_url          
-        FROM transport_model tm
-        LEFT JOIN owned_transport ot
-            ON ot.owned_id = (
-                SELECT MIN(ot2.owned_id)
-                FROM owned_transport ot2
-                WHERE ot2.model_id = tm.model_id
-                  AND ot2.user_id = #{userId}
-                  AND ot2.acquired_yn = 'Y'
-            )
-        
-        <include refid="rankingWhere"/>
-
-        <choose>
-            <when test="filter.type == 'LAP_TIME'">
-                ORDER BY tm.lap_time ASC
-            </when>
-
-            <otherwise>
-                ORDER BY tm.top_speed DESC
-            </otherwise>
-        </choose>
-
-        LIMIT #{offset}, #{size}
-
-    </select>
+	<select id="selectRankingPage" resultType="com.gta.dto.ranking.RankingResponse">
+	    SELECT
+	        ranked.model_id,
+	        ranked.manufacturer,
+	        ranked.price,
+	        ranked.name,
+	        ranked.transport_category,
+	        ranked.lap_time,
+	        ranked.top_speed,
+	        ranked.features,
+	        ot.owned_id,
+	        ot.image_url,
+	        ranked.display_rank AS `rank`
+	
+	    FROM
+	    (
+	        SELECT
+	            remaining.model_id,
+	            remaining.manufacturer,
+	            remaining.price,
+	            remaining.name,
+	            remaining.transport_category,
+	            remaining.lap_time,
+	            remaining.top_speed,
+	            remaining.features,
+	            remaining.row_no,
+	
+	            3 + RANK() OVER (
+	                <choose>
+	                    <when test="filter.type == 'LAP_TIME'">
+	                        ORDER BY remaining.lap_time ASC
+	                    </when>
+	                    <otherwise>
+	                        ORDER BY remaining.top_speed DESC
+	                    </otherwise>
+	                </choose>
+	            ) AS display_rank
+	
+	        FROM
+	        (
+	            SELECT
+	                tm.model_id,
+	                tm.manufacturer,
+	                tm.price,
+	                tm.name,
+	                tm.transport_category,
+	                tm.lap_time,
+	                tm.top_speed,
+	                tm.features,
+	
+	                ROW_NUMBER() OVER (
+	                    <choose>
+	                        <when test="filter.type == 'LAP_TIME'">
+	                            ORDER BY
+	                                tm.lap_time ASC,
+	                                tm.top_speed DESC,
+	                                tm.price DESC,
+	                                tm.name ASC,
+	                                tm.model_id ASC
+	                        </when>
+	                        <otherwise>
+	                            ORDER BY
+	                                tm.top_speed DESC,
+	                                tm.lap_time ASC,
+	                                tm.price DESC,
+	                                tm.name ASC,
+	                                tm.model_id ASC
+	                        </otherwise>
+	                    </choose>
+	                ) AS row_no
+	
+	            FROM transport_model tm
+	
+	            <include refid="rankingWhere"/>
+	
+	        ) remaining
+	
+	        WHERE remaining.row_no > 3
+	
+	    ) ranked
+	
+	    LEFT JOIN owned_transport ot
+	        ON ot.owned_id = (
+	            SELECT MIN(ot2.owned_id)
+	            FROM owned_transport ot2
+	            WHERE ot2.model_id = ranked.model_id
+	              AND ot2.user_id = #{userId}
+	              AND ot2.acquired_yn = 'Y'
+	        )
+	
+	    ORDER BY ranked.row_no ASC
+	    LIMIT #{offset}, #{size}
+	</select>
+    
     
     <!-- 4위 이하 랭킹 전체 건수 조회 -->
     <select id="selectRankingCount"
